@@ -1,5 +1,6 @@
 var config = {
-    // type: Phaser.AUTO,
+    type: Phaser.AUTO,
+    mode: Phaser.Scale.Fit,
     width: 800,
     height: 600,
     physics: {
