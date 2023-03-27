@@ -13,7 +13,10 @@ class LevelOne extends Phaser.Scene {
         this.pastTime = Date.now();
 
         this.player1;
+        this.P1Wins;
+
         this.player2;
+        this.P2wins;
 
         this.leader;
         this.itemStart;
@@ -71,6 +74,7 @@ class LevelOne extends Phaser.Scene {
         this.wrapPlayers(); // Allows players to wrap around the map
         this.spawnItem(); // Spawns items around the map every 10 seconds
         this.checkPowerUpTime(); // Removes powerups from players if they've been active longer than the treshhold
+        this.gameOver();
 
     }
 
@@ -235,8 +239,8 @@ class LevelOne extends Phaser.Scene {
     // Creates the players, collisions, and animations
     createPlayers(){
         // Spawns players
-        this.player1 = this.physics.add.sprite(500, 450, 'dude');
-        this.player2 = this.physics.add.sprite(100, 450, 'dude');
+        this.player1 = this.physics.add.sprite(600, 600, 'dude');
+        this.player2 = this.physics.add.sprite(680, 600, 'dude');
 
         this.player1.body.setGravityY(300); // Sets gravity for player
         this.player1.setCollideWorldBounds(true); // Stops sprite from running off the stage
@@ -409,6 +413,20 @@ class LevelOne extends Phaser.Scene {
                 this.player1Backwards = false;
                 console.log("turning off powerups for player2")
             }
+        }
+    }
+
+    gameOver(){
+        if (this.player1.body.position.y > this.player2.body.position.y + 550){
+            this.physics.pause();
+            this.P2Wins = this.add.text(game.config.width/2, game.config.height/2, 'Game Over, Player 2 wins', {fontSize: '32px', fill: '#000', backgroundColor: "yellow"});
+            this.P2Wins.setOrigin(.5)
+            console.log("player 1 loses")
+        } else if (this.player2.body.position.y > this.player1.body.position.y + 550){
+            this.physics.pause();
+            this.P1Wins = this.add.text(game.config.width/2, game.config.height/2, 'Game Over, Player 1 wins', {fontSize: '32px', fill: '#000', backgroundColor: "yellow"});
+            this.P1Wins.setOrigin(.5)
+            console.log("player 2 loses")
         }
     }
 }
