@@ -421,12 +421,10 @@ class LevelOne extends Phaser.Scene {
             this.physics.pause();
             this.P2Wins = this.add.text(game.config.width/2, game.config.height/2, 'Game Over, Player 2 wins', {fontSize: '32px', fill: '#000', backgroundColor: "yellow"});
             this.P2Wins.setOrigin(.5)
-            console.log("player 1 loses")
         } else if (this.player2.body.position.y > this.player1.body.position.y + 550){
             this.physics.pause();
             this.P1Wins = this.add.text(game.config.width/2, game.config.height/2, 'Game Over, Player 1 wins', {fontSize: '32px', fill: '#000', backgroundColor: "yellow"});
             this.P1Wins.setOrigin(.5)
-            console.log("player 2 loses")
         }
     }
 }
