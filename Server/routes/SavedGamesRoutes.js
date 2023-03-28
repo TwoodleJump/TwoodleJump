@@ -21,7 +21,7 @@ app.put("/players/update/:id", async (req, res) => {
   try {
     const players = await SavedGameModel.findById({ _id: id });
     if (!players) {
-      return res.status(404).send({ message: `User with ID ${id} not found` });
+      return res.status(404).send({ message: `Game with ID ${id} not found` });
     }
 
     players.player1 = req.body.player1 || players.player1;
@@ -45,6 +45,23 @@ app.get("/players", async (req, res) => {
 
   try {
     res.send(players);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
+//DELETE
+app.delete("/players/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedSavedGame = await SavedGameModel.findOneAndDelete({ _id: id });
+
+    if (!deletedSavedGame) {
+      return res.status(404).send({ message: `Game with ID ${id} not found` });
+    }
+
+    res.status(200).send(deletedSavedGame);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
