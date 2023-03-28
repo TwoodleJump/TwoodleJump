@@ -1,4 +1,4 @@
-#Twoodle Jump
+# Twoodle Jump
 
 # Spinning up the server
 Install required modules (i.e. nodemon, express, node, etc.).
