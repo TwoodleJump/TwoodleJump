@@ -30,6 +30,10 @@ class LevelOne extends Phaser.Scene {
         this.player2Speed = false;
         this.player2Backwards = false;
         this.player2SuperJump = false;
+
+        this.displayWinner = false;
+        this.displayP1Item = false;
+        this.displayP2Item = false;
     }
 
     // Loads assets into the game. The first parameter is what string that will be used to access the asset
@@ -38,6 +42,7 @@ class LevelOne extends Phaser.Scene {
         this.load.image('platform', 'assets/platform.png');
         this.load.image('item', 'assets/item.png');
         this.load.image('ground', 'assets/ground.png');
+        this.load.image('gameoverGray', 'assets/gameoverGray.png')
         this.load.spritesheet('dude', 
             'assets/dude.png',
             { frameWidth: 32, frameHeight: 48 }
@@ -80,112 +85,165 @@ class LevelOne extends Phaser.Scene {
 
     // Controls up down left right moves for player one
     playerOneMoves() {
-        if (this.cursors.left.isDown && !this.player1Speed) {
-            this.player1.setVelocityX(-250);
-            this.player1.anims.play('left', true);
-        } else if (this.cursors.right.isDown  && !this.player1Speed) {
-            this.player1.setVelocityX(250);
-            this.player1.anims.play('right', true);
-        } else if (this.cursors.left.isDown && this.player1Speed) {
-            this.player1.setVelocityX(-450);
-            this.player1.anims.play('left', true);
-        } else if (this.cursors.right.isDown  && this.player1Speed){
-            this.player1.setVelocityX(450);
-            this.player1.anims.play('right', true);
-        }
-        else {
-            this.player1.setVelocityX(0);
-            this.player1.anims.play('turn');
-        }
+        if (!this.displayWinner){
+            // Move left with no speed boost
+            if (this.cursors.left.isDown && !this.player1Speed) {
+                this.player1.setVelocityX(-250);
+                this.player1.anims.play('left', true);
+            // Move right with no speed boost
+            } else if (this.cursors.right.isDown  && !this.player1Speed) {
+                this.player1.setVelocityX(250);
+                this.player1.anims.play('right', true);
+            // Move down with no speed boost
+            } else if (this.cursors.down.isDown && !this.player1Speed) {
+                this.player1.setVelocityY(400);
+            // Move left with speed boost
+            } else if (this.cursors.left.isDown && this.player1Speed) {
+                this.player1.setVelocityX(-450);
+                this.player1.anims.play('left', true);
+            // Move right with speed boost
+            } else if (this.cursors.right.isDown  && this.player1Speed){
+                this.player1.setVelocityX(450);
+                this.player1.anims.play('right', true);
+            // Move down with speed boost
+            } else if (this.cursors.down.isDown && this.player1Speed) {
+                this.player1.setVelocityY(450);
+            // No moves
+            } else {
+                this.player1.setVelocityX(0);
+                this.player1.anims.play('turn');
+            }
 
-        // Make sure that player is touching ground before they can jump
-        if (this.cursors.up.isDown && this.player1.body.touching.down && !this.player1SuperJump) { 
-            this.player1.setVelocityY(-580);
-        } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
-            this.player1.setVelocityY(-700);
+            // Make sure that player is touching ground before they can jump
+            if (this.cursors.up.isDown && this.player1.body.touching.down && !this.player1SuperJump) { 
+                this.player1.setVelocityY(-580);
+            } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
+                this.player1.setVelocityY(-700);
+            }
         }
     }
 
     // Controls WASD moves for player Two
-    playerTwoMoves(keys) {        
-        if (keys.A.isDown && !this.player2Speed) {
-            this.player2.setVelocityX(-250);
-            this.player2.anims.play('left', true);
-        } else if (keys.D.isDown && !this.player2Speed) {
-            this.player2.setVelocityX(250);
-            this.player2.anims.play('right', true);
-        } else if (keys.A.isDown && this.player2Speed){
-            this.player2.setVelocityX(-450);
-            this.player2.anims.play('left', true);
-        } else if (keys.D.isDown && this.player2Speed){
-            this.player2.setVelocityX(450);
-            this.player2.anims.play('right', true);
-        } else {
-            this.player2.setVelocityX(0);
-            this.player2.anims.play('turn');
-        }
+    playerTwoMoves(keys) {       
+        if (!this.displayWinner){
+            // Move left with no speed boost
+            if (keys.A.isDown && !this.player2Speed) {
+                this.player2.setVelocityX(-250);
+                this.player2.anims.play('left', true);
+            // Move right with no speed boost
+            } else if (keys.D.isDown && !this.player2Speed) {
+                this.player2.setVelocityX(250);
+                this.player2.anims.play('right', true);
+            // Move down with no speed boost
+            } else if (keys.S.isDown && !this.player2Speed) {
+                this.player2.setVelocityY(400);
+            // Move left with speed boost
+            } else if (keys.A.isDown && this.player2Speed){
+                this.player2.setVelocityX(-450);
+                this.player2.anims.play('left', true);
+            // Move right with speed boost
+            } else if (keys.D.isDown && this.player2Speed){
+                this.player2.setVelocityX(450);
+                this.player2.anims.play('right', true);
+            // Move down with speed boost
+            } else if (this.cursors.down.isDown && this.player2Speed) {
+                this.player2.setVelocityY(450);
+            // No moves
+            } else {
+                this.player2.setVelocityX(0);
+                this.player2.anims.play('turn');
+            }
 
-        // Make sure that player is touching ground before they can jump
-        if (keys.W.isDown && this.player2.body.touching.down && !this.player2SuperJump) {
-            this.player2.setVelocityY(-580);
-        } else if (keys.W.isDown && this.player2.body.touching.down && this.player2SuperJump){
-            this.player2.setVelocityY(-700);
-        }
+            // Make sure that player is touching ground before they can jump
+            if (keys.W.isDown && this.player2.body.touching.down && !this.player2SuperJump) {
+                this.player2.setVelocityY(-580);
+            } else if (keys.W.isDown && this.player2.body.touching.down && this.player2SuperJump){
+                this.player2.setVelocityY(-700);
+            }            
+        } 
+
     }
 
     // Controls up down left right moves for player one
     playerOneMovesBackwards() {
-        if (this.cursors.left.isDown && !this.player1Speed) {
-            this.player1.setVelocityX(250);
-            this.player1.anims.play('right', true);
-        } else if (this.cursors.right.isDown  && !this.player1Speed) {
-            this.player1.setVelocityX(-250);
-            this.player1.anims.play('left', true);
-        } else if (this.cursors.left.isDown && this.player1Speed) {
-            this.player1.setVelocityX(450);
-            this.player1.anims.play('right', true);
-        } else if (this.cursors.right.isDown  && this.player1Speed){
-            this.player1.setVelocityX(-450);
-            this.player1.anims.play('left', true);
-        }
-        else {
-            this.player1.setVelocityX(0);
-            this.player1.anims.play('turn');
+        // Stops user from moving when the game is
+        if (!this.displayWinner){
+            // Move right with no speed boost
+            if (this.cursors.left.isDown && !this.player1Speed) {
+                this.player1.setVelocityX(250);
+                this.player1.anims.play('right', true);
+            // Move left with no speed boost
+            } else if (this.cursors.right.isDown  && !this.player1Speed) {
+                this.player1.setVelocityX(-250);
+                this.player1.anims.play('left', true);
+            // Move down with no speed boost
+            } else if (this.cursors.down.isDown && !this.player1Speed) {
+                this.player1.setVelocityY(400);
+            // Move right with speed boost
+            } else if (this.cursors.left.isDown && this.player1Speed) {
+                this.player1.setVelocityX(450);
+                this.player1.anims.play('right', true);
+            // Move left with speed boost
+            } else if (this.cursors.right.isDown  && this.player1Speed){
+                this.player1.setVelocityX(-450);
+                this.player1.anims.play('left', true);
+            // Move down with speed boost
+            } else if (this.cursors.down.isDown && this.player1Speed) {
+                this.player1.setVelocityY(450);
+            // No moves
+            } else {
+                this.player1.setVelocityX(0);
+                this.player1.anims.play('turn');
+            }
+
+            // Make sure that player is touching ground before they can jump
+            if (this.cursors.up.isDown && this.player1.body.touching.down && !this.player1SuperJump) { 
+                this.player1.setVelocityY(-580);
+            } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
+                this.player1.setVelocityY(-700);
+            }            
         }
 
-        // Make sure that player is touching ground before they can jump
-        if (this.cursors.up.isDown && this.player1.body.touching.down && !this.player1SuperJump) { 
-            this.player1.setVelocityY(-580);
-        } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
-            this.player1.setVelocityY(-700);
-        }
     }
 
     // Controls WASD moves for player Two
-    playerTwoMovesBackwards(keys) {        
-        if (keys.A.isDown && !this.player2Speed) {
-            this.player2.setVelocityX(250);
-            this.player2.anims.play('right', true);
-        } else if (keys.D.isDown && !this.player2Speed) {
-            this.player2.setVelocityX(-250);
-            this.player2.anims.play('left', true);
-        } else if (keys.A.isDown && this.player2Speed){
-            this.player2.setVelocityX(450);
-            this.player2.anims.play('right', true);
-        } else if (keys.D.isDown && this.player2Speed){
-            this.player2.setVelocityX(-450);
-            this.player2.anims.play('left', true);
-        } else {
-            this.player2.setVelocityX(0);
-            this.player2.anims.play('turn');
-        }
+    playerTwoMovesBackwards(keys) {     
+        if (!this.displayWinner){
+            // Move right with no speed boost
+            if (keys.A.isDown && !this.player2Speed) {
+                this.player2.setVelocityX(250);
+                this.player2.anims.play('right', true);
+            // Move left with no speed boost
+            } else if (keys.D.isDown && !this.player2Speed) {
+                this.player2.setVelocityX(-250);
+                this.player2.anims.play('left', true);
+            // Move down with no speed boost
+            } else if (keys.S.isDown && !this.player2Speed) {
+                this.player2.setVelocityY(400);
+            // Move right with speed boost
+            } else if (keys.A.isDown && this.player2Speed){
+                this.player2.setVelocityX(450);
+                this.player2.anims.play('right', true);
+            // Move left with speed boost
+            } else if (keys.D.isDown && this.player2Speed){
+                this.player2.setVelocityX(-450);
+                this.player2.anims.play('left', true);
+            // Move down with speed boost
+            } else if (this.cursors.down.isDown && this.player2Speed) {
+                this.player2.setVelocityY(450);
+            // No moves
+            } else {
+                this.player2.setVelocityX(0);
+                this.player2.anims.play('turn');
+            }
 
-        // Make sure that player is touching ground before they can jump
-        if (keys.W.isDown && this.player2.body.touching.down && !this.player2SuperJump) {
-            this.player2.setVelocityY(-580);
-        } else if (keys.W.isDown && this.player2.body.touching.down && this.player2SuperJump){
-            this.player2.setVelocityY(-700);
-        }
+            // Make sure that player is touching ground before they can jump
+            if (keys.W.isDown && this.player2.body.touching.down && !this.player2SuperJump) {
+                this.player2.setVelocityY(-580);
+            } else if (keys.W.isDown && this.player2.body.touching.down && this.player2SuperJump){
+                this.player2.setVelocityY(-700);
+            }            
+        }   
     }
 
     // If a player walks off the edge of the map (horizontally), move them to the other side
@@ -239,8 +297,8 @@ class LevelOne extends Phaser.Scene {
     // Creates the players, collisions, and animations
     createPlayers(){
         // Spawns players
-        this.player1 = this.physics.add.sprite(600, 600, 'dude');
-        this.player2 = this.physics.add.sprite(680, 600, 'dude');
+        this.player1 = this.physics.add.sprite(680, 600, 'dude');
+        this.player2 = this.physics.add.sprite(600, 600, 'dude');
 
         this.player1.body.setGravityY(300); // Sets gravity for player
         this.player1.setCollideWorldBounds(true); // Stops sprite from running off the stage
@@ -306,23 +364,26 @@ class LevelOne extends Phaser.Scene {
 
     spawnItem(){
         // Determines if 8 seconds have passed
-        let currTime = Date.now()
+        if (!this.displayWinner) {
+            let currTime = Date.now()
 
-        if (Date.now() - this.pastTime >= 1000 * 8){
+            if (Date.now() - this.pastTime >= 1000 * 8){
+        
+                // Spawns an item around the person who is in first place
+                    if (this.leader == this.player1){
+                        item = itemsGroup.create(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200 ), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400 ), 'item');
+                    } else {
+                        item = itemsGroup.create(Phaser.Math.Between(this.player2.body.position.x - 200, this.player2.body.position.x + 200 ), Phaser.Math.Between(this.player2.body.position.y - 400, this.player2.body.position.y + 400 ), 'item');
+                    }
+                item.setImmovable();
+                item.setScale(.6).refreshBody();
     
-            // Spawns an item around the person who is in first place
-                if (this.leader == this.player1){
-                    item = itemsGroup.create(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200 ), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400 ), 'item');
-                } else {
-                    item = itemsGroup.create(Phaser.Math.Between(this.player2.body.position.x - 200, this.player2.body.position.x + 200 ), Phaser.Math.Between(this.player2.body.position.y - 400, this.player2.body.position.y + 400 ), 'item');
-                }
-            item.setImmovable();
-            item.setScale(.6).refreshBody();
-
-            this.pastTime = currTime;
-            return item;
-
+                this.pastTime = currTime;
+                return item;
+    
+            }
         }
+
 	}
 
     removeBadItem(ground, item){
@@ -416,15 +477,37 @@ class LevelOne extends Phaser.Scene {
         }
     }
 
-    gameOver(){
+    // Determines what to do once a player wins
+    gameOver() {
+        const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
+        const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+
         if (this.player1.body.position.y > this.player2.body.position.y + 550){
             this.physics.pause();
-            this.P2Wins = this.add.text(game.config.width/2, game.config.height/2, 'Game Over, Player 2 wins', {fontSize: '32px', fill: '#000', backgroundColor: "yellow"});
-            this.P2Wins.setOrigin(.5)
+
+            // Stops text from being off centered
+            if (!this.displayWinner){
+                this.add.image(screenCenterX, screenCenterY, 'gameoverGray').setAlpha(.5).setScale(5);
+                this.P2Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, Player 2 wins', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
+                this.P2Wins.setOrigin(.5)
+                this.displayWinner = true;
+
+                this.player1.anims.play('turn');
+                this.player2.anims.play('turn');
+            }
         } else if (this.player2.body.position.y > this.player1.body.position.y + 550){
             this.physics.pause();
-            this.P1Wins = this.add.text(game.config.width/2, game.config.height/2, 'Game Over, Player 1 wins', {fontSize: '32px', fill: '#000', backgroundColor: "yellow"});
-            this.P1Wins.setOrigin(.5)
+            
+            // Stops text from being off centered
+            if (!this.displayWinner){
+                this.add.image(screenCenterX, screenCenterY, 'gameoverGray').setAlpha(.5).setScale(5);
+                this.P1Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, Player 1 wins', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
+                this.P1Wins.setOrigin(.5)
+                this.displayWinner = true;
+
+                this.player1.anims.play('turn');
+                this.player2.anims.play('turn');
+            }
         }
     }
 }

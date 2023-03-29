@@ -11,7 +11,6 @@ var config = {
         }
     },
     scale: {
-        parent: 'myGame',
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     scene: [LevelOne]
