@@ -34,13 +34,15 @@ class LevelOne extends Phaser.Scene {
         this.displayWinner = false;
         this.displayP1Item = false;
         this.displayP2Item = false;
+
+        this.itemsGroup;
     }
 
     // Loads assets into the game. The first parameter is what string that will be used to access the asset
     preload() {
         this.load.image('sky', 'assets/sky.png');
         this.load.image('platform', 'assets/platform.png');
-        this.load.image('item', 'assets/item.png');
+        this.load.spritesheet('item', 'assets/itemBox.png', { frameWidth: 64, frameHeight: 64 });
         this.load.image('ground', 'assets/ground.png');
         this.load.image('gameoverGray', 'assets/gameoverGray.png')
         this.load.spritesheet('dude', 
@@ -94,9 +96,6 @@ class LevelOne extends Phaser.Scene {
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
                 this.player1.setVelocityX(250);
                 this.player1.anims.play('right', true);
-            // Move down with no speed boost
-            } else if (this.cursors.down.isDown && !this.player1Speed) {
-                this.player1.setVelocityY(400);
             // Move left with speed boost
             } else if (this.cursors.left.isDown && this.player1Speed) {
                 this.player1.setVelocityX(-450);
@@ -105,11 +104,8 @@ class LevelOne extends Phaser.Scene {
             } else if (this.cursors.right.isDown  && this.player1Speed){
                 this.player1.setVelocityX(450);
                 this.player1.anims.play('right', true);
-            // Move down with speed boost
-            } else if (this.cursors.down.isDown && this.player1Speed) {
-                this.player1.setVelocityY(450);
-            // No moves
-            } else {
+            // No Move
+            }  else {
                 this.player1.setVelocityX(0);
                 this.player1.anims.play('turn');
             }
@@ -119,6 +115,14 @@ class LevelOne extends Phaser.Scene {
                 this.player1.setVelocityY(-580);
             } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
                 this.player1.setVelocityY(-700);
+            }
+
+            // Move down with no speed boost
+            if (this.cursors.down.isDown && !this.player1Speed) {
+                this.player1.setVelocityY(400);
+            // Move down with speed boost
+            } else if (this.cursors.down.isDown && this.player1Speed) {
+                this.player1.setVelocityY(450);
             }
         }
     }
@@ -134,9 +138,6 @@ class LevelOne extends Phaser.Scene {
             } else if (keys.D.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(250);
                 this.player2.anims.play('right', true);
-            // Move down with no speed boost
-            } else if (keys.S.isDown && !this.player2Speed) {
-                this.player2.setVelocityY(400);
             // Move left with speed boost
             } else if (keys.A.isDown && this.player2Speed){
                 this.player2.setVelocityX(-450);
@@ -145,13 +146,18 @@ class LevelOne extends Phaser.Scene {
             } else if (keys.D.isDown && this.player2Speed){
                 this.player2.setVelocityX(450);
                 this.player2.anims.play('right', true);
-            // Move down with speed boost
-            } else if (this.cursors.down.isDown && this.player2Speed) {
-                this.player2.setVelocityY(450);
-            // No moves
-            } else {
+            // No move
+            }  else {
                 this.player2.setVelocityX(0);
                 this.player2.anims.play('turn');
+            }
+
+            // Move down with no speed boost
+            if (keys.S.isDown && !this.player2Speed) {
+                this.player2.setVelocityY(400);
+            // Move down with speed boost
+            } else if (keys.S.isDown && this.player2Speed) {
+                this.player2.setVelocityY(450);
             }
 
             // Make sure that player is touching ground before they can jump
@@ -176,24 +182,27 @@ class LevelOne extends Phaser.Scene {
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
                 this.player1.setVelocityX(-250);
                 this.player1.anims.play('left', true);
-            // Move down with no speed boost
-            } else if (this.cursors.down.isDown && !this.player1Speed) {
-                this.player1.setVelocityY(400);
             // Move right with speed boost
-            } else if (this.cursors.left.isDown && this.player1Speed) {
+            }  else if (this.cursors.left.isDown && this.player1Speed) {
                 this.player1.setVelocityX(450);
                 this.player1.anims.play('right', true);
             // Move left with speed boost
             } else if (this.cursors.right.isDown  && this.player1Speed){
                 this.player1.setVelocityX(-450);
                 this.player1.anims.play('left', true);
+            // No Move
+            }  else {
+                this.player1.setVelocityX(0);
+                this.player1.anims.play('turn');
+            }
+
+            // Move down with no speed boost
+            if (this.cursors.down.isDown && !this.player1Speed) {
+                this.player1.setVelocityY(400);
             // Move down with speed boost
             } else if (this.cursors.down.isDown && this.player1Speed) {
                 this.player1.setVelocityY(450);
             // No moves
-            } else {
-                this.player1.setVelocityX(0);
-                this.player1.anims.play('turn');
             }
 
             // Make sure that player is touching ground before they can jump
@@ -217,11 +226,8 @@ class LevelOne extends Phaser.Scene {
             } else if (keys.D.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(-250);
                 this.player2.anims.play('left', true);
-            // Move down with no speed boost
-            } else if (keys.S.isDown && !this.player2Speed) {
-                this.player2.setVelocityY(400);
             // Move right with speed boost
-            } else if (keys.A.isDown && this.player2Speed){
+            }  else if (keys.A.isDown && this.player2Speed){
                 this.player2.setVelocityX(450);
                 this.player2.anims.play('right', true);
             // Move left with speed boost
@@ -229,13 +235,18 @@ class LevelOne extends Phaser.Scene {
                 this.player2.setVelocityX(-450);
                 this.player2.anims.play('left', true);
             // Move down with speed boost
-            } else if (this.cursors.down.isDown && this.player2Speed) {
-                this.player2.setVelocityY(450);
-            // No moves
             } else {
                 this.player2.setVelocityX(0);
                 this.player2.anims.play('turn');
             }
+
+            // Move down with no speed boost
+            if (keys.S.isDown && !this.player2Speed) {
+                this.player2.setVelocityY(400);
+            // Move down with speed boost
+            } else if (keys.S.isDown && this.player2Speed) {
+                this.player2.setVelocityY(450);
+            } 
 
             // Make sure that player is touching ground before they can jump
             if (keys.W.isDown && this.player2.body.touching.down && !this.player2SuperJump) {
@@ -285,7 +296,7 @@ class LevelOne extends Phaser.Scene {
         this.floor = this.physics.add.staticGroup();
         this.floor.create(game.config.width/2, 750, 'ground').setScale(1).refreshBody();
 
-        this.physics.add.overlap(this.floor, itemsGroup, this.removeBadItem, null, this);
+        this.physics.add.overlap(this.floor, this.itemsGroup, this.removeBadItem, null, this);
     }
 
     // Adjusts camera so that it stays within the bounds of the game
@@ -304,13 +315,13 @@ class LevelOne extends Phaser.Scene {
         this.player1.setCollideWorldBounds(true); // Stops sprite from running off the stage
         this.physics.add.collider(this.player1, this.floor); // Makes player not fall through floor
         this.physics.add.collider(this.player1, platformsGroup); // Makes player not fall through platform
-        this.physics.add.overlap(this.player1, itemsGroup, this.itemCollectP1, null, this);
+        this.physics.add.overlap(this.player1, this.itemsGroup, this.itemCollectP1, null, this);
 
         this.player2.body.setGravityY(300); // Sets gravity for player
         this.player2.setCollideWorldBounds(true); // Stops sprite from running off the stage
         this.physics.add.collider(this.player2, this.floor); // Makes player not fall through floor
         this.physics.add.collider(this.player2, platformsGroup); // Makes player not fall through platform
-        this.physics.add.overlap(this.player2, itemsGroup, this.itemCollectP2, null, this);
+        this.physics.add.overlap(this.player2, this.itemsGroup, this.itemCollectP2, null, this);
 
         this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother
 
@@ -322,6 +333,7 @@ class LevelOne extends Phaser.Scene {
             repeat: -1 // Tells animation to loop
         });
 
+        // Do this when character isn't moving
         this.anims.create({
             key: 'turn',
             frames: [ { key: 'dude', frame: 4 } ],
@@ -335,23 +347,39 @@ class LevelOne extends Phaser.Scene {
             frameRate: 10, // fps
             repeat: -1 // Tells animation to loop
         });
+
+
+        this.anims.create({
+            key: 'spin',
+            frames: this.anims.generateFrameNumbers('item', { start: 0, end: 6 }), // Chooses the frames from the frame sheet
+            frameRate: 10, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+        this.anims.create({
+            key: 'stop',
+            frames: [ { key: 'item', frame: 4 } ],
+            frameRate: 20 // fps
+        });
+
     }
     
+    // Creates an item group
     createItems() {
-        itemsGroup = this.physics.add.staticGroup();
-        itemsGroup.enableBody = true;
+        this.itemsGroup = this.add.group();
+        this.itemsGroup.enableBody = true;
     }
 
     // Creates platforms
     createPlatforms(){
         platformsGroup = this.physics.add.staticGroup();
 		platformsGroup.enableBody = true;
-        this.physics.add.overlap(platformsGroup, itemsGroup, this.removeBadItem, null, this);
+        this.physics.add.overlap(platformsGroup, this.itemsGroup, this.removeBadItem, null, this);
 		// Spawns 1000 tiles going up
 		for( var i = 0; i<1000; i++){
 			this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
 		}
-        this.physics.add.overlap(platform, itemsGroup, this.removeBadItem, null, this);
+        this.physics.add.overlap(platform, this.itemsGroup, this.removeBadItem, null, this);
 	} 
 
     // Adds tile to platformsGroup and spawns it
@@ -371,12 +399,14 @@ class LevelOne extends Phaser.Scene {
         
                 // Spawns an item around the person who is in first place
                     if (this.leader == this.player1){
-                        item = itemsGroup.create(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200 ), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400 ), 'item');
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400), 'item').setImmovable(true);
                     } else {
-                        item = itemsGroup.create(Phaser.Math.Between(this.player2.body.position.x - 200, this.player2.body.position.x + 200 ), Phaser.Math.Between(this.player2.body.position.y - 400, this.player2.body.position.y + 400 ), 'item');
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400), 'item').setImmovable(true);
                     }
-                item.setImmovable();
-                item.setScale(.6).refreshBody();
+                item.body.setAllowGravity(false); // Makes items float
+                item.anims.play('spin'); // Starts animation
+
+                this.itemsGroup.add(item);
     
                 this.pastTime = currTime;
                 return item;
@@ -386,8 +416,9 @@ class LevelOne extends Phaser.Scene {
 
 	}
 
+    // Makes items not spawn in ground
     removeBadItem(ground, item){
-        item.disableBody(true,true);
+        item.setVisible(true);
     }
 
     // Creates continuous background with 1280x720 background photo
