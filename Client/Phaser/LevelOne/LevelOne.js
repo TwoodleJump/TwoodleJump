@@ -45,9 +45,13 @@ class LevelOne extends Phaser.Scene {
         this.load.spritesheet('item', 'assets/itemBox.png', { frameWidth: 64, frameHeight: 64 });
         this.load.image('ground', 'assets/ground.png');
         this.load.image('gameoverGray', 'assets/gameoverGray.png')
-        this.load.spritesheet('dude', 
-            'assets/dude.png',
-            { frameWidth: 32, frameHeight: 48 }
+        this.load.spritesheet('player1', 
+            'assets/blueGuy.png',
+            { frameWidth: 64, frameHeight: 72 }
+        );
+        this.load.spritesheet('player2', 
+            'assets/redGuy.png',
+            { frameWidth: 64, frameHeight: 72 }
         );
     }
 
@@ -91,28 +95,30 @@ class LevelOne extends Phaser.Scene {
             // Move left with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
                 this.player1.setVelocityX(-250);
-                this.player1.anims.play('left', true);
+                this.player1.anims.play('left1', true);
             // Move right with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
                 this.player1.setVelocityX(250);
-                this.player1.anims.play('right', true);
+                this.player1.anims.play('right1', true);
+
             // Move left with speed boost
             } else if (this.cursors.left.isDown && this.player1Speed) {
                 this.player1.setVelocityX(-450);
-                this.player1.anims.play('left', true);
+                this.player1.anims.play('left1', true);
             // Move right with speed boost
             } else if (this.cursors.right.isDown  && this.player1Speed){
                 this.player1.setVelocityX(450);
-                this.player1.anims.play('right', true);
+                this.player1.anims.play('right1', true);
             // No Move
             }  else {
                 this.player1.setVelocityX(0);
-                this.player1.anims.play('turn');
+                this.player1.anims.play('turn1');
             }
 
             // Make sure that player is touching ground before they can jump
             if (this.cursors.up.isDown && this.player1.body.touching.down && !this.player1SuperJump) { 
                 this.player1.setVelocityY(-580);
+                // this.player1.anims.play('jump1', true);
             } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
                 this.player1.setVelocityY(-700);
             }
@@ -133,23 +139,23 @@ class LevelOne extends Phaser.Scene {
             // Move left with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(-250);
-                this.player2.anims.play('left', true);
+                this.player2.anims.play('left2', true);
             // Move right with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(250);
-                this.player2.anims.play('right', true);
+                this.player2.anims.play('right2', true);
             // Move left with speed boost
             } else if (keys.A.isDown && this.player2Speed){
                 this.player2.setVelocityX(-450);
-                this.player2.anims.play('left', true);
+                this.player2.anims.play('left2', true);
             // Move right with speed boost
             } else if (keys.D.isDown && this.player2Speed){
                 this.player2.setVelocityX(450);
-                this.player2.anims.play('right', true);
+                this.player2.anims.play('right2', true);
             // No move
             }  else {
                 this.player2.setVelocityX(0);
-                this.player2.anims.play('turn');
+                this.player2.anims.play('turn2');
             }
 
             // Move down with no speed boost
@@ -177,23 +183,23 @@ class LevelOne extends Phaser.Scene {
             // Move right with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
                 this.player1.setVelocityX(250);
-                this.player1.anims.play('right', true);
+                this.player1.anims.play('right1', true);
             // Move left with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
                 this.player1.setVelocityX(-250);
-                this.player1.anims.play('left', true);
+                this.player1.anims.play('left1', true);
             // Move right with speed boost
             }  else if (this.cursors.left.isDown && this.player1Speed) {
                 this.player1.setVelocityX(450);
-                this.player1.anims.play('right', true);
+                this.player1.anims.play('right1', true);
             // Move left with speed boost
             } else if (this.cursors.right.isDown  && this.player1Speed){
                 this.player1.setVelocityX(-450);
-                this.player1.anims.play('left', true);
+                this.player1.anims.play('left1', true);
             // No Move
             }  else {
                 this.player1.setVelocityX(0);
-                this.player1.anims.play('turn');
+                this.player1.anims.play('turn1');
             }
 
             // Move down with no speed boost
@@ -221,23 +227,23 @@ class LevelOne extends Phaser.Scene {
             // Move right with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(250);
-                this.player2.anims.play('right', true);
+                this.player2.anims.play('right2', true);
             // Move left with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(-250);
-                this.player2.anims.play('left', true);
+                this.player2.anims.play('left2', true);
             // Move right with speed boost
             }  else if (keys.A.isDown && this.player2Speed){
                 this.player2.setVelocityX(450);
-                this.player2.anims.play('right', true);
+                this.player2.anims.play('right2', true);
             // Move left with speed boost
             } else if (keys.D.isDown && this.player2Speed){
                 this.player2.setVelocityX(-450);
-                this.player2.anims.play('left', true);
+                this.player2.anims.play('left2', true);
             // Move down with speed boost
             } else {
                 this.player2.setVelocityX(0);
-                this.player2.anims.play('turn');
+                this.player2.anims.play('turn2');
             }
 
             // Move down with no speed boost
@@ -308,8 +314,8 @@ class LevelOne extends Phaser.Scene {
     // Creates the players, collisions, and animations
     createPlayers(){
         // Spawns players
-        this.player1 = this.physics.add.sprite(680, 600, 'dude');
-        this.player2 = this.physics.add.sprite(600, 600, 'dude');
+        this.player1 = this.physics.add.sprite(680, 600, 'player1');
+        this.player2 = this.physics.add.sprite(600, 600, 'player2');
 
         this.player1.body.setGravityY(300); // Sets gravity for player
         this.player1.setCollideWorldBounds(true); // Stops sprite from running off the stage
@@ -325,26 +331,58 @@ class LevelOne extends Phaser.Scene {
 
         this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother
 
+        //Player 1
         // Do this when character runs left
         this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }), // Chooses the frames from the frame sheet
-            frameRate: 10, // fps
+            key: 'left1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 17, end: 23 }), // Chooses the frames from the frame sheet
+            frameRate: 15, // fps
             repeat: -1 // Tells animation to loop
         });
 
         // Do this when character isn't moving
         this.anims.create({
-            key: 'turn',
-            frames: [ { key: 'dude', frame: 4 } ],
+            key: 'turn1',
+            frames: [ { key: 'player1', frame: 0 } ],
             frameRate: 20 // fps
         });
 
         // Do this when character runs left
         this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10, // fps
+            key: 'right1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 4, end: 11 }),
+            frameRate: 15, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+        this.anims.create({
+            key: 'jump1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 0, end: 4 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        //Player 2
+        // Do this when character runs left
+        this.anims.create({
+            key: 'left2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 17, end: 23 }), // Chooses the frames from the frame sheet
+            frameRate: 15, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+        // Do this when character isn't moving
+        this.anims.create({
+            key: 'turn2',
+            frames: [ { key: 'player2', frame: 0 } ],
+            frameRate: 20 // fps
+        });
+
+        // Do this when character runs left
+        this.anims.create({
+            key: 'right2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 4, end: 11 }),
+            frameRate: 15, // fps
             repeat: -1 // Tells animation to loop
         });
 
