@@ -561,8 +561,8 @@ class LevelOne extends Phaser.Scene {
                 this.P2Wins.setOrigin(.5)
                 this.displayWinner = true;
 
-                this.player1.anims.play('turn');
-                this.player2.anims.play('turn');
+                this.player1.anims.play('turn1');
+                this.player2.anims.play('turn2');
             }
         } else if (this.player2.body.position.y > this.player1.body.position.y + 550){
             this.physics.pause();
@@ -574,8 +574,8 @@ class LevelOne extends Phaser.Scene {
                 this.P1Wins.setOrigin(.5)
                 this.displayWinner = true;
 
-                this.player1.anims.play('turn');
-                this.player2.anims.play('turn');
+                this.player1.anims.play('turn1');
+                this.player2.anims.play('turn2');
             }
         }
     }
