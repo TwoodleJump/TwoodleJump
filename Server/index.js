@@ -3,13 +3,13 @@
 */
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
-const Router = require("./routes/SavedGamesRoutes");
+const SavedGames = require("./routes/SavedGamesRoutes");
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
-app.use(Router);
+app.use(SavedGames);
 
 /*
     Listening on port 3001 or 5000

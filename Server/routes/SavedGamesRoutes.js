@@ -15,13 +15,15 @@ app.post("/create_game", async (req, res) => {
 });
 
 //PUT
-app.put("/players/update/:id", async (req, res) => {
-  const { id } = req.params;
+app.put("/games/update/:passcode", async (req, res) => {
+  const { passcode } = req.params;
 
   try {
-    const players = await SavedGameModel.findById({ _id: id });
+    const players = await SavedGameModel.findOne({ passcode: passcode });
     if (!players) {
-      return res.status(404).send({ message: `Game with ID ${id} not found` });
+      return res
+        .status(404)
+        .send({ message: `Game with passcode ${passcode} not found` });
     }
 
     players.player1 = req.body.player1 || players.player1;
@@ -34,13 +36,12 @@ app.put("/players/update/:id", async (req, res) => {
 
     res.send(updatedPlayers);
   } catch (error) {
-    console.error(err);
     res.status(500).send({ message: error.message });
   }
 });
 
 //GET
-app.get("/players", async (req, res) => {
+app.get("/games", async (req, res) => {
   const players = await SavedGameModel.find({});
 
   try {
@@ -51,14 +52,18 @@ app.get("/players", async (req, res) => {
 });
 
 //DELETE
-app.delete("/players/:id", async (req, res) => {
-  const { id } = req.params;
+app.delete("/games/:passcode", async (req, res) => {
+  const { passcode } = req.params;
 
   try {
-    const deletedSavedGame = await SavedGameModel.findOneAndDelete({ _id: id });
+    const deletedSavedGame = await SavedGameModel.findOneAndDelete({
+      passcode: passcode,
+    });
 
     if (!deletedSavedGame) {
-      return res.status(404).send({ message: `Game with ID ${id} not found` });
+      return res
+        .status(404)
+        .send({ message: `Game with passcode ${passcode} not found` });
     }
 
     res.status(200).send(deletedSavedGame);
