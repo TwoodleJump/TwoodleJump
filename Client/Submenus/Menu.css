@@ -1,7 +1,7 @@
 .screen{
   width: 100vw;
   height: 100vh;
-  background-image: url('http://heavy.com/wp-content/uploads/2014/01/doodlej.jpg');
+  background-image: url('images/background_3.png');
   background-size: cover;
   /* background-color: #000; */
   color: #f50202;
@@ -29,7 +29,8 @@
 #menu-screen {
     width: 100vw;
     height: 100vh;
-    background-image: url('http://heavy.com/wp-content/uploads/2014/01/doodlej.jpg');
+/*     background-image: url('http://heavy.com/wp-content/uploads/2014/01/doodlej.jpg'); */
+    background-image: url('images/background_3.png');
     background-size: cover;
     /* background-color: #000; */
     color: #f50202;
