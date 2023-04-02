@@ -22,6 +22,8 @@ const SavedGameSchema = new mongoose.Schema({
   },
 });
 
-const SavedGame = mongoose.model("SavedGame", SavedGameSchema);
+// based on this schema, connect to the respective database collection
+const myDB = mongoose.connection.useDb("test");
+const SavedGame = myDB.model("SavedGame", SavedGameSchema);
 
 module.exports = SavedGame;
