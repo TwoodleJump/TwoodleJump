@@ -14,7 +14,7 @@ const SavedGameSchema = new mongoose.Schema({
     required: true,
   },
   player2Wins: {
-    type: String,
+    type: Number,
     required: true,
   },
   passcode: {
