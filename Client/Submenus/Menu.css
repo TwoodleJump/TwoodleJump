@@ -1,0 +1,53 @@
+
+#menu-screen {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('http://heavy.com/wp-content/uploads/2014/01/doodlej.jpg');
+    background-size: cover;
+    /* background-color: #000; */
+    color: #f50202;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  h1 {
+    font-size: 10rem;
+    margin-bottom: 2rem;
+    font-family: "Comic Sans", Comic Sans MS;
+    animation: shake 10s;
+    animation-iteration-count: infinite;
+  }
+  
+  button {
+    padding: 1rem 2rem;
+    font-size: 2rem;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    transition: transform 0.2s ease-out;
+    margin-bottom: 1rem;
+    /* animation: shake 50s;
+    animation-iteration-count: infinite; */
+  }
+
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+  
+  button:hover {
+    transform: rotate(3deg) translateX(5px);
+    animation: shake 0.5s infinite;
+  }
