@@ -13,9 +13,21 @@ window.onload = function() {
         /*Whatever load does*/ 
         //Maybe this if we want to make a whole new page. If not we can make a drop down menu
         //The href is just a random name made. Have not implemented the dropdown yet.
-        window.location.href = "input.html";
+        //window.location.href = "input.html";
     
-        // startGame();
+        // This displays the load block
+        var loadScreen = document.getElementById("load-screen");
+        loadScreen.style.display = "block";
+        
+        //Listens for the click of the submit button. 
+        var submitButton = document.getElementById("load-submit-button");
+        
+        //After click it will get the user inupt and send it as a parameter to the load game function
+        submitButton.addEventListener("click", function() {
+          var userInput = document.getElementById("user-input").value;
+          loadgame(userInput);
+        });
+
     }
   }
   
@@ -46,6 +58,12 @@ window.onload = function() {
   
     var game = new Phaser.Game(config);
   }
+
+  function loadgame(input) {
+    // Code to load game given the user input
+    console.log("User input: " + input);
+  }
+
 
 //Original Code 
 // var config = {
