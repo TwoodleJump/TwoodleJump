@@ -1,3 +1,30 @@
+.screen{
+  width: 100vw;
+  height: 100vh;
+  background-image: url('http://heavy.com/wp-content/uploads/2014/01/doodlej.jpg');
+  background-size: cover;
+  /* background-color: #000; */
+  color: #f50202;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#load-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+}
+
+#load-screen input, #load-screen button {
+  margin-top: 50px;
+}
+
+
 
 #menu-screen {
     width: 100vw;
