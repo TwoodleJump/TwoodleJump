@@ -25,11 +25,13 @@ class LevelOne extends Phaser.Scene {
         this.player1Speed = false;
         this.player1Backwards = false;
         this.player1SuperJump = false;
+        this.player1ItemText = false;
 
         this.player2ItemStart;
         this.player2Speed = false;
         this.player2Backwards = false;
         this.player2SuperJump = false;
+        this.player2ItemText = false;
 
         this.displayWinner = false;
         this.displayP1Item = false;
@@ -84,6 +86,7 @@ class LevelOne extends Phaser.Scene {
         this.changeCamera(); // Changes the camera based on who is higher
         this.wrapPlayers(); // Allows players to wrap around the map
         this.spawnItem(); // Spawns items around the map every 10 seconds
+        this.updateItemText(); // Make sures the item text is always above the user's head
         this.checkPowerUpTime(); // Removes powerups from players if they've been active longer than the treshhold
         this.gameOver();
 
@@ -329,7 +332,12 @@ class LevelOne extends Phaser.Scene {
         this.physics.add.collider(this.player2, platformsGroup); // Makes player not fall through platform
         this.physics.add.overlap(this.player2, this.itemsGroup, this.itemCollectP2, null, this);
 
-        this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother
+        this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother 
+        
+        this.player1ItemText = this.add.text(this.player1.x - 33, this.player1.y - 40, "Player 1")
+        this.player2ItemText = this.add.text(this.player2.x - 33, this.player2.y - 40, "Player 2")
+        this.player1ItemText.setVisible(false);
+        this.player2ItemText.setVisible(false);
 
         //Player 1
         // Do this when character runs left
@@ -435,9 +443,9 @@ class LevelOne extends Phaser.Scene {
 
             if (Date.now() - this.pastTime >= 1000 * 8){
         
-                // Spawns an item around the person who is in first place
+                // Spawns an item around the person who is losing
                     if (this.leader == this.player1){
-                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400), 'item').setImmovable(true);
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player2.body.position.x - 200, this.player2.body.position.x + 200), Phaser.Math.Between(this.player2.body.position.y - 400, this.player2.body.position.y + 400), 'item').setImmovable(true);
                     } else {
                         item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400), 'item').setImmovable(true);
                     }
@@ -471,23 +479,35 @@ class LevelOne extends Phaser.Scene {
         item.disableBody(true,true);
 
         // If player 1 has no powerups activates currently
-        if (!this.player1Speed && !this.player1SuperJump && !this.player2Backwards){
+        if (!this.player1Speed && !this.player1SuperJump && !this.player1Backwards){
             let itemSelector = Phaser.Math.Between(0, 100);
             this.player1ItemStart = Date.now();
 
             // Sets powerup to true and marks the time when it was turned on
             if (itemSelector <= 33){
                 console.log("turning on super speed for p1")
+
+                this.player1ItemText.setText("Super Speed");
+                this.player1ItemText.setVisible(true);
+
                 this.player1Speed = true;
                 this.player1ItemStart = Date.now();
             } else if (itemSelector <= 66) {
                 console.log("turning on super jump for p1")
+
+                this.player1ItemText.setText("Super Jump");
+                this.player1ItemText.setVisible(true);
+
                 this.player1SuperJump = true;
                 this.player1ItemStart = Date.now();
             } else {
                 console.log("turning on backwards controls for p2")
+
+                this.player2ItemText.setText("Reversed");
+                this.player2ItemText.setVisible(true);
+
                 this.player2Backwards = true;
-                this.player1ItemStart = Date.now();
+                this.player2ItemStart = Date.now();
             }
         }
 
@@ -498,7 +518,7 @@ class LevelOne extends Phaser.Scene {
         item.disableBody(true,true);
 
         // If player 2 has no powerups activates currently
-        if (!this.player2Speed && !this.player2SuperJump && !this.player1Backwards){
+        if (!this.player2Speed && !this.player2SuperJump && !this.player2Backwards){
             let itemSelector = Phaser.Math.Between(0, 100);
             this.player2ItemStart = Date.now();
 
@@ -506,44 +526,72 @@ class LevelOne extends Phaser.Scene {
             if (itemSelector <= 33){
                 console.log("turning on super speed for p2")
                 this.player2Speed = true;
+
+                this.player2ItemText.setText("Super Speed");
+                this.player2ItemText.setVisible(true);
+
                 this.player2ItemStart = Date.now();
             } else if (itemSelector <= 66) {
                 console.log("turning on super jump for p2")
+
+                this.player2ItemText.setText("Super Jump");
+                this.player2ItemText.setVisible(true);
+
                 this.player2SuperJump = true;
                 this.player2ItemStart = Date.now();
             } else {
                 console.log("turning on backwards controls for p1")
+
+                this.player1ItemText.setText("Reversed");
+                this.player1ItemText.setVisible(true);
+
                 this.player1Backwards = true;
-                this.player2ItemStart = Date.now();
+                this.player1ItemStart = Date.now();
             }
         }
     }
 
     // Turns off powerups after they hit their limit
     checkPowerUpTime(){
-        let currTime = Date.now();
+        if (!this.displayWinner){
+            let currTime = Date.now();
 
-        // If player 1 has an item active currently
-        if (this.player1Speed || this.player1SuperJump || this.player2Backwards){
-            // If item has been active for 7 seconds or more, disable item
-            if (currTime - this.player1ItemStart >= 1000 * 7){
-                this.player1Speed = false;
-                this.player1SuperJump = false;
-                this.player2Backwards = false;
-                console.log("turning off powerups for player1")
+            // If player 1 has an item active currently
+            if (this.player1Speed || this.player1SuperJump || this.player1Backwards){
+                // If item has been active for 7 seconds or more, disable item
+                if (currTime - this.player1ItemStart >= 1000 * 7){
+                    this.player1Speed = false;
+                    this.player1SuperJump = false;
+                    this.player1Backwards = false;
+                    console.log("turning off powerups for player1")
+                    this.player1ItemText.setVisible(false);
+                }
+            }
+
+            // If player 2 has an item active currently
+            if (this.player2Speed || this.player2SuperJump || this.player2Backwards){
+                // If item has been active for 7 seconds or more, disable item
+                if (currTime - this.player2ItemStart >= 1000 * 7){
+                    this.player2Speed = false;
+                    this.player2SuperJump = false;
+                    this.player2Backwards = false;
+                    console.log("turning off powerups for player2")
+                    this.player2ItemText.setVisible(false);
+                }
             }
         }
 
-        // If player 2 has an item active currently
-        if (this.player2Speed || this.player2SuperJump || this.player1Backwards){
-            // If item has been active for 7 seconds or more, disable item
-            if (currTime - this.player2ItemStart >= 1000 * 7){
-                this.player2Speed = false;
-                this.player2SuperJump = false;
-                this.player1Backwards = false;
-                console.log("turning off powerups for player2")
-            }
-        }
+      
+
+
+    }
+
+    updateItemText() {
+        this.player1ItemText.x = this.player1.x - 37
+        this.player1ItemText.y = this.player1.y - 40
+
+        this.player2ItemText.x = this.player2.x - 37
+        this.player2ItemText.y = this.player2.y - 40
     }
 
     // Determines what to do once a player wins

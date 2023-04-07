@@ -94,11 +94,11 @@ class LevelTwo extends Phaser.Scene {
         if (!this.displayWinner){
             // Move left with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
-                this.player1.setVelocityX(-250);
+                this.player1.setVelocityX(-350);
                 this.player1.anims.play('left1', true);
             // Move right with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
-                this.player1.setVelocityX(250);
+                this.player1.setVelocityX(350);
                 this.player1.anims.play('right1', true);
 
             // Move left with speed boost
@@ -111,7 +111,7 @@ class LevelTwo extends Phaser.Scene {
                 this.player1.anims.play('right1', true);
             // No Move
             }  else {
-                this.player1.setVelocityX(0);
+                this.player1.setDrag(150);
                 this.player1.anims.play('turn1');
             }
 
@@ -138,11 +138,11 @@ class LevelTwo extends Phaser.Scene {
         if (!this.displayWinner){
             // Move left with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(-250);
+                this.player2.setVelocityX(-350);
                 this.player2.anims.play('left2', true);
             // Move right with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(250);
+                this.player2.setVelocityX(350);
                 this.player2.anims.play('right2', true);
             // Move left with speed boost
             } else if (keys.A.isDown && this.player2Speed){
@@ -154,7 +154,7 @@ class LevelTwo extends Phaser.Scene {
                 this.player2.anims.play('right2', true);
             // No move
             }  else {
-                this.player2.setVelocityX(0);
+                this.player2.setDrag(150);
                 this.player2.anims.play('turn2');
             }
 
@@ -182,11 +182,11 @@ class LevelTwo extends Phaser.Scene {
         if (!this.displayWinner){
             // Move right with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
-                this.player1.setVelocityX(250);
+                this.player1.setVelocityX(350);
                 this.player1.anims.play('right1', true);
             // Move left with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
-                this.player1.setVelocityX(-250);
+                this.player1.setVelocityX(-350);
                 this.player1.anims.play('left1', true);
             // Move right with speed boost
             }  else if (this.cursors.left.isDown && this.player1Speed) {
@@ -198,7 +198,7 @@ class LevelTwo extends Phaser.Scene {
                 this.player1.anims.play('left1', true);
             // No Move
             }  else {
-                this.player1.setVelocityX(0);
+                this.player1.setDrag(150);
                 this.player1.anims.play('turn1');
             }
 
@@ -226,11 +226,11 @@ class LevelTwo extends Phaser.Scene {
         if (!this.displayWinner){
             // Move right with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(250);
+                this.player2.setVelocityX(350);
                 this.player2.anims.play('right2', true);
             // Move left with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(-250);
+                this.player2.setVelocityX(-350);
                 this.player2.anims.play('left2', true);
             // Move right with speed boost
             }  else if (keys.A.isDown && this.player2Speed){
@@ -242,7 +242,7 @@ class LevelTwo extends Phaser.Scene {
                 this.player2.anims.play('left2', true);
             // Move down with speed boost
             } else {
-                this.player2.setVelocityX(0);
+                this.player2.setDrag(150);
                 this.player2.anims.play('turn2');
             }
 
@@ -471,7 +471,7 @@ class LevelTwo extends Phaser.Scene {
         item.disableBody(true,true);
 
         // If player 1 has no powerups activates currently
-        if (!this.player1Speed && !this.player1SuperJump && !this.player2Backwards){
+        if (!this.player1Speed && !this.player1SuperJump && !this.player1Backwards){
             let itemSelector = Phaser.Math.Between(0, 100);
             this.player1ItemStart = Date.now();
 
@@ -487,7 +487,7 @@ class LevelTwo extends Phaser.Scene {
             } else {
                 console.log("turning on backwards controls for p2")
                 this.player2Backwards = true;
-                this.player1ItemStart = Date.now();
+                this.player2ItemStart = Date.now();
             }
         }
 
@@ -498,7 +498,7 @@ class LevelTwo extends Phaser.Scene {
         item.disableBody(true,true);
 
         // If player 2 has no powerups activates currently
-        if (!this.player2Speed && !this.player2SuperJump && !this.player1Backwards){
+        if (!this.player2Speed && !this.player2SuperJump && !this.player2Backwards){
             let itemSelector = Phaser.Math.Between(0, 100);
             this.player2ItemStart = Date.now();
 
@@ -514,7 +514,7 @@ class LevelTwo extends Phaser.Scene {
             } else {
                 console.log("turning on backwards controls for p1")
                 this.player1Backwards = true;
-                this.player2ItemStart = Date.now();
+                this.player1ItemStart = Date.now();
             }
         }
     }
@@ -524,23 +524,23 @@ class LevelTwo extends Phaser.Scene {
         let currTime = Date.now();
 
         // If player 1 has an item active currently
-        if (this.player1Speed || this.player1SuperJump || this.player2Backwards){
+        if (this.player1Speed || this.player1SuperJump || this.player1Backwards){
             // If item has been active for 7 seconds or more, disable item
             if (currTime - this.player1ItemStart >= 1000 * 7){
                 this.player1Speed = false;
                 this.player1SuperJump = false;
-                this.player2Backwards = false;
+                this.player1Backwards = false;
                 console.log("turning off powerups for player1")
             }
         }
 
         // If player 2 has an item active currently
-        if (this.player2Speed || this.player2SuperJump || this.player1Backwards){
+        if (this.player2Speed || this.player2SuperJump || this.player2Backwards){
             // If item has been active for 7 seconds or more, disable item
             if (currTime - this.player2ItemStart >= 1000 * 7){
                 this.player2Speed = false;
                 this.player2SuperJump = false;
-                this.player1Backwards = false;
+                this.player2Backwards = false;
                 console.log("turning off powerups for player2")
             }
         }
