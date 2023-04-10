@@ -55,6 +55,23 @@ class LevelTwo extends Phaser.Scene {
         );
     }
 
+        // Loads assets into the game. The first parameter is what string that will be used to access the asset
+    preload() {
+        this.load.image('sky', 'assets/sky.png');
+        this.load.image('platform', 'assets/platform.png');
+        this.load.spritesheet('item', 'assets/itemBox.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.image('ground', 'assets/ground.png');
+        this.load.image('gameoverGray', 'assets/gameoverGray.png')
+        this.load.spritesheet('player1', 
+            'assets/blueGuy.png',
+            { frameWidth: 64, frameHeight: 72 }
+        );
+        this.load.spritesheet('player2', 
+            'assets/redGuy.png',
+            { frameWidth: 64, frameHeight: 72 }
+        );
+    }
+
     // Puts those assets and such into the game
     create () {
         this.createBackground();
@@ -80,10 +97,11 @@ class LevelTwo extends Phaser.Scene {
         } else {
             this.playerTwoMovesBackwards(keys); //Checks for player 2 movements but makes them backwards (for powerup)
         }
- 
+    
         this.changeCamera(); // Changes the camera based on who is higher
         this.wrapPlayers(); // Allows players to wrap around the map
         this.spawnItem(); // Spawns items around the map every 10 seconds
+        this.updateItemText(); // Make sures the item text is always above the user's head
         this.checkPowerUpTime(); // Removes powerups from players if they've been active longer than the treshhold
         this.gameOver();
 
@@ -262,7 +280,6 @@ class LevelTwo extends Phaser.Scene {
             }            
         }   
     }
-
     // If a player walks off the edge of the map (horizontally), move them to the other side
     wrapPlayers() {
         if (this.player1.body.position.x < 0){
@@ -329,7 +346,12 @@ class LevelTwo extends Phaser.Scene {
         this.physics.add.collider(this.player2, platformsGroup); // Makes player not fall through platform
         this.physics.add.overlap(this.player2, this.itemsGroup, this.itemCollectP2, null, this);
 
-        this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother
+        this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother 
+        
+        this.player1ItemText = this.add.text(this.player1.x - 33, this.player1.y - 40, "Player 1")
+        this.player2ItemText = this.add.text(this.player2.x - 33, this.player2.y - 40, "Player 2")
+        this.player1ItemText.setVisible(false);
+        this.player2ItemText.setVisible(false);
 
         //Player 1
         // Do this when character runs left
@@ -411,22 +433,22 @@ class LevelTwo extends Phaser.Scene {
     // Creates platforms
     createPlatforms(){
         platformsGroup = this.physics.add.staticGroup();
-		platformsGroup.enableBody = true;
+        platformsGroup.enableBody = true;
         this.physics.add.overlap(platformsGroup, this.itemsGroup, this.removeBadItem, null, this);
-		// Spawns 1000 tiles going up
-		for( var i = 0; i<1000; i++){
-			this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
-		}
+        // Spawns 1000 tiles going up
+        for( var i = 0; i<1000; i++){
+            this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
+        }
         this.physics.add.overlap(platform, this.itemsGroup, this.removeBadItem, null, this);
-	} 
+    } 
 
     // Adds tile to platformsGroup and spawns it
     spawnPlatform(x, y, type){
-		platform = platformsGroup.create(x, y, type);
-		platform.setImmovable();
+        platform = platformsGroup.create(x, y, type);
+        platform.setImmovable();
         platform.setScale(.2).refreshBody();
-		return platform;
-	}
+        return platform;
+    }
 
     spawnItem(){
         // Determines if 8 seconds have passed
@@ -435,9 +457,9 @@ class LevelTwo extends Phaser.Scene {
 
             if (Date.now() - this.pastTime >= 1000 * 8){
         
-                // Spawns an item around the person who is in first place
+                // Spawns an item around the person who is losing
                     if (this.leader == this.player1){
-                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400), 'item').setImmovable(true);
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player2.body.position.x - 200, this.player2.body.position.x + 200), Phaser.Math.Between(this.player2.body.position.y - 400, this.player2.body.position.y + 400), 'item').setImmovable(true);
                     } else {
                         item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400), 'item').setImmovable(true);
                     }
@@ -452,7 +474,7 @@ class LevelTwo extends Phaser.Scene {
             }
         }
 
-	}
+    }
 
     // Makes items not spawn in ground
     removeBadItem(ground, item){
@@ -478,14 +500,26 @@ class LevelTwo extends Phaser.Scene {
             // Sets powerup to true and marks the time when it was turned on
             if (itemSelector <= 33){
                 console.log("turning on super speed for p1")
+
+                this.player1ItemText.setText("Super Speed");
+                this.player1ItemText.setVisible(true);
+
                 this.player1Speed = true;
                 this.player1ItemStart = Date.now();
             } else if (itemSelector <= 66) {
                 console.log("turning on super jump for p1")
+
+                this.player1ItemText.setText("Super Jump");
+                this.player1ItemText.setVisible(true);
+
                 this.player1SuperJump = true;
                 this.player1ItemStart = Date.now();
             } else {
                 console.log("turning on backwards controls for p2")
+
+                this.player2ItemText.setText("Reversed");
+                this.player2ItemText.setVisible(true);
+
                 this.player2Backwards = true;
                 this.player2ItemStart = Date.now();
             }
@@ -506,13 +540,25 @@ class LevelTwo extends Phaser.Scene {
             if (itemSelector <= 33){
                 console.log("turning on super speed for p2")
                 this.player2Speed = true;
+
+                this.player2ItemText.setText("Super Speed");
+                this.player2ItemText.setVisible(true);
+
                 this.player2ItemStart = Date.now();
             } else if (itemSelector <= 66) {
                 console.log("turning on super jump for p2")
+
+                this.player2ItemText.setText("Super Jump");
+                this.player2ItemText.setVisible(true);
+
                 this.player2SuperJump = true;
                 this.player2ItemStart = Date.now();
             } else {
                 console.log("turning on backwards controls for p1")
+
+                this.player1ItemText.setText("Reversed");
+                this.player1ItemText.setVisible(true);
+
                 this.player1Backwards = true;
                 this.player1ItemStart = Date.now();
             }
@@ -521,29 +567,45 @@ class LevelTwo extends Phaser.Scene {
 
     // Turns off powerups after they hit their limit
     checkPowerUpTime(){
-        let currTime = Date.now();
+        if (!this.displayWinner){
+            let currTime = Date.now();
 
-        // If player 1 has an item active currently
-        if (this.player1Speed || this.player1SuperJump || this.player1Backwards){
-            // If item has been active for 7 seconds or more, disable item
-            if (currTime - this.player1ItemStart >= 1000 * 7){
-                this.player1Speed = false;
-                this.player1SuperJump = false;
-                this.player1Backwards = false;
-                console.log("turning off powerups for player1")
+            // If player 1 has an item active currently
+            if (this.player1Speed || this.player1SuperJump || this.player1Backwards){
+                // If item has been active for 7 seconds or more, disable item
+                if (currTime - this.player1ItemStart >= 1000 * 7){
+                    this.player1Speed = false;
+                    this.player1SuperJump = false;
+                    this.player1Backwards = false;
+                    console.log("turning off powerups for player1")
+                    this.player1ItemText.setVisible(false);
+                }
+            }
+
+            // If player 2 has an item active currently
+            if (this.player2Speed || this.player2SuperJump || this.player2Backwards){
+                // If item has been active for 7 seconds or more, disable item
+                if (currTime - this.player2ItemStart >= 1000 * 7){
+                    this.player2Speed = false;
+                    this.player2SuperJump = false;
+                    this.player2Backwards = false;
+                    console.log("turning off powerups for player2")
+                    this.player2ItemText.setVisible(false);
+                }
             }
         }
 
-        // If player 2 has an item active currently
-        if (this.player2Speed || this.player2SuperJump || this.player2Backwards){
-            // If item has been active for 7 seconds or more, disable item
-            if (currTime - this.player2ItemStart >= 1000 * 7){
-                this.player2Speed = false;
-                this.player2SuperJump = false;
-                this.player2Backwards = false;
-                console.log("turning off powerups for player2")
-            }
-        }
+        
+
+
+    }
+
+    updateItemText() {
+        this.player1ItemText.x = this.player1.x - 37
+        this.player1ItemText.y = this.player1.y - 40
+
+        this.player2ItemText.x = this.player2.x - 37
+        this.player2ItemText.y = this.player2.y - 40
     }
 
     // Determines what to do once a player wins
