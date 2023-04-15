@@ -21,12 +21,16 @@ class LevelOne extends Phaser.Scene {
         this.leader;
         this.itemStart;
 
+        this.player1Name = "player1";
+        this.player1Wins = 0;
         this.player1ItemStart;
         this.player1Speed = false;
         this.player1Backwards = false;
         this.player1SuperJump = false;
         this.player1ItemText = false;
 
+        this.player2Name = "player2";
+        this.player2Wins = 0;
         this.player2ItemStart;
         this.player2Speed = false;
         this.player2Backwards = false;
@@ -38,6 +42,9 @@ class LevelOne extends Phaser.Scene {
         this.displayP2Item = false;
 
         this.itemsGroup;
+        this.passcode;
+
+        this.getData();
     }
 
     // Loads assets into the game. The first parameter is what string that will be used to access the asset
@@ -90,6 +97,37 @@ class LevelOne extends Phaser.Scene {
         this.checkPowerUpTime(); // Removes powerups from players if they've been active longer than the treshhold
         this.gameOver();
 
+    }
+
+    getData() {
+        var passcode = 1234
+        this.passcode = passcode;
+
+        const options = {
+            method: 'GET'
+        }
+      
+        fetch('/games', options)
+        .then(response => {
+            if(response.ok) {
+                return response.json();
+            }
+        }).then(data => {
+            // If there is data, look for user
+            if(data) {
+                // Find the row with the correct id and save it's index
+                //console.log(data)
+                for (let i = 0; i < data.length; i++){
+                    if (data[i]["passcode"] == passcode){
+                        console.log([data[i]])
+                        this.player1Name = data[i]["player1"];
+                        this.player1Wins = data[i]["player1Wins"];
+                        this.player2Name = data[i]["player2"];
+                        this.player2Wins = data[i]["player2Wins"];
+                    }
+                }
+            }
+        })
     }
 
     // Controls up down left right moves for player one
@@ -605,9 +643,13 @@ class LevelOne extends Phaser.Scene {
             // Stops text from being off centered
             if (!this.displayWinner){
                 this.add.image(screenCenterX, screenCenterY, 'gameoverGray').setAlpha(.5).setScale(5);
-                this.P2Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, Player 2 wins', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
+                this.P2Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, '+ this.player2Name + ' wins!', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
                 this.P2Wins.setOrigin(.5)
                 this.displayWinner = true;
+
+                this.player2Wins += 1;
+                this.updateWins()
+
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
@@ -618,13 +660,32 @@ class LevelOne extends Phaser.Scene {
             // Stops text from being off centered
             if (!this.displayWinner){
                 this.add.image(screenCenterX, screenCenterY, 'gameoverGray').setAlpha(.5).setScale(5);
-                this.P1Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, Player 1 wins', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
+                this.P1Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, '+ this.player1Name + ' wins!', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
                 this.P1Wins.setOrigin(.5)
                 this.displayWinner = true;
+
+                this.player1Wins += 1;
+                this.updateWins()
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
             }
         }
+    }
+
+    updateWins() {
+        // Prepares data to be posted
+        const data = {"player1": this.player1Name, "player2": this.player2Name, "player1Wins": this.player1Wins, "player2Wins": this.player2Wins}
+        const options = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }
+
+        let route = '/games/update/' + this.passcode
+        // Sends Post
+        fetch(route, options);
     }
 }
