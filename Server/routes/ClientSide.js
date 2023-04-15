@@ -5,6 +5,9 @@ var path = require('path');
 
 app.use(express.static(path.join(__dirname, '/../../Client/Phaser')))
 app.use(express.static(path.join(__dirname, '/../../Client/Phaser/LevelOne')))
+app.use(express.static(path.join(__dirname, '/../../Client/Phaser/LevelTwo')))
+app.use(express.static(path.join(__dirname, '/../../Client/Phaser/LevelThree')))
+
 
 
 app.get("/", async (req, res) => {
