@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Game Screen</title>
+</head>
+<body>
+
+    <header>
+    </header>
+    
+    <main>
+        <div class="create_game" id = "create_game_form">
+            <form id="game_data">
+                <input 
+                    type="text"
+                    id="player_1_name"
+                    class = "input-bar"
+                    placeholder="Player 1 Name" />
+                <input 
+                    type="text"
+                    id="player_2_name"
+                    class = "input-bar"
+                    placeholder="Player 2 Name" />
+                <input 
+                    type="text"
+                    id="passcode"
+                    class = "input-bar"
+                    placeholder="Passcode" />
+                <input
+                    type="submit"
+                    id="add-user-submit"
+                    class="button"
+                    value="Start Game" />
+            </form>
+        </div>
+    </main>
+
+    <script type = "module" src="/Client/Submenus/create_Game/index.js"></script>
+    <script type = "module" src="index.js"></script>
+</body>
+</html>
