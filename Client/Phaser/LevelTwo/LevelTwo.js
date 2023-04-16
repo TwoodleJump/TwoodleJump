@@ -23,7 +23,7 @@ class LevelTwo extends Phaser.Scene {
         this.leader;
         this.itemStart;
 
-        this.player1Name;
+        this.player1Name = sessionStorage.getItem("player1Name");
         this.player1NameText;
         this.player1Wins = 0;
         this.player1ItemStart;
@@ -32,7 +32,7 @@ class LevelTwo extends Phaser.Scene {
         this.player1SuperJump = false;
         this.player1ItemText = false;
 
-        this.player2Name;
+        this.player2Name = sessionStorage.getItem("player2Name");
         this.player2NameText;
         this.player2Wins = 0;
         this.player2ItemStart;
@@ -744,6 +744,9 @@ class LevelTwo extends Phaser.Scene {
         let route = '/games/update/' + this.passcode
         // Sends Post
         fetch(route, options);
+
+        sessionStorage.setItem("player1Wins", this.player1Wins);
+        sessionStorage.setItem("player2Wins", this.player2Wins);
     }
 
     // Moves to the next level/endgame screen

@@ -54,8 +54,10 @@ create_game_form.addEventListener("submit", (event) => {
     // Sends Post
     fetch('/create_game', options);
 
-    // Stores passcode to the browser so game can use it
+    // Stores data for the game
     sessionStorage.setItem("passcode", passcode); 
+    sessionStorage.setItem("player1Name", player_1_name);
+    sessionStorage.setItem("player2Name", player_2_name);
     
     // Goes to the first level
     location.href = "/LevelOne";
