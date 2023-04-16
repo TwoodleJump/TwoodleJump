@@ -8,6 +8,7 @@ var timer
 class LevelOne extends Phaser.Scene {
     constructor(){
         super("First_level");
+        this.getData();
         this.floor;
         this.cursors;
         this.pastTime = Date.now();
@@ -21,7 +22,8 @@ class LevelOne extends Phaser.Scene {
         this.leader;
         this.itemStart;
 
-        this.player1Name = "player1";
+        this.player1Name;
+        this.player1NameText;
         this.player1Wins = 0;
         this.player1ItemStart;
         this.player1Speed = false;
@@ -29,7 +31,8 @@ class LevelOne extends Phaser.Scene {
         this.player1SuperJump = false;
         this.player1ItemText = false;
 
-        this.player2Name = "player2";
+        this.player2Name;
+        this.player2NameText;
         this.player2Wins = 0;
         this.player2ItemStart;
         this.player2Speed = false;
@@ -44,7 +47,11 @@ class LevelOne extends Phaser.Scene {
         this.itemsGroup;
         this.passcode;
 
-        this.getData();
+        this.displayNames;
+
+        this.jump;
+        this.powerup;
+
     }
 
     // Loads assets into the game. The first parameter is what string that will be used to access the asset
@@ -54,6 +61,8 @@ class LevelOne extends Phaser.Scene {
         this.load.spritesheet('item', 'assets/itemBox.png', { frameWidth: 64, frameHeight: 64 });
         this.load.image('ground', 'assets/ground.png');
         this.load.image('gameoverGray', 'assets/gameoverGray.png')
+        this.load.audio("jump", ["assets/jump.mp3"])
+        this.load.audio("powerup", ["assets/Powerup.mp3"])
         this.load.spritesheet('player1', 
             'assets/blueGuy.png',
             { frameWidth: 64, frameHeight: 72 }
@@ -94,13 +103,15 @@ class LevelOne extends Phaser.Scene {
         this.wrapPlayers(); // Allows players to wrap around the map
         this.spawnItem(); // Spawns items around the map every 10 seconds
         this.updateItemText(); // Make sures the item text is always above the user's head
+        this.updateNameText();
         this.checkPowerUpTime(); // Removes powerups from players if they've been active longer than the treshhold
-        this.gameOver();
+        this.checkNameTime(); // Removes names from player's head after a few seconds
+        this.gameOver(); // Checks if the game is complete
+        
 
     }
 
     getData() {
-
         const options = {
             method: 'GET'
         }
@@ -156,9 +167,10 @@ class LevelOne extends Phaser.Scene {
 
             // Make sure that player is touching ground before they can jump
             if (this.cursors.up.isDown && this.player1.body.touching.down && !this.player1SuperJump) { 
+                this.jump.play()
                 this.player1.setVelocityY(-580);
-                // this.player1.anims.play('jump1', true);
             } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
+                this.jump.play()
                 this.player1.setVelocityY(-700);
             }
 
@@ -207,8 +219,10 @@ class LevelOne extends Phaser.Scene {
 
             // Make sure that player is touching ground before they can jump
             if (keys.W.isDown && this.player2.body.touching.down && !this.player2SuperJump) {
+                this.jump.play()
                 this.player2.setVelocityY(-580);
             } else if (keys.W.isDown && this.player2.body.touching.down && this.player2SuperJump){
+                this.jump.play()
                 this.player2.setVelocityY(-700);
             }            
         } 
@@ -252,8 +266,10 @@ class LevelOne extends Phaser.Scene {
 
             // Make sure that player is touching ground before they can jump
             if (this.cursors.up.isDown && this.player1.body.touching.down && !this.player1SuperJump) { 
+                this.jump.play()
                 this.player1.setVelocityY(-580);
             } else if (this.cursors.up.isDown && this.player1.body.touching.down && this.player1SuperJump){
+                this.jump.play()
                 this.player1.setVelocityY(-700);
             }            
         }
@@ -295,8 +311,10 @@ class LevelOne extends Phaser.Scene {
 
             // Make sure that player is touching ground before they can jump
             if (keys.W.isDown && this.player2.body.touching.down && !this.player2SuperJump) {
+                this.jump.play()
                 this.player2.setVelocityY(-580);
             } else if (keys.W.isDown && this.player2.body.touching.down && this.player2SuperJump){
+                this.jump.play()
                 this.player2.setVelocityY(-700);
             }            
         }   
@@ -342,6 +360,9 @@ class LevelOne extends Phaser.Scene {
         this.floor.create(game.config.width/2, 750, 'ground').setScale(1).refreshBody();
 
         this.physics.add.overlap(this.floor, this.itemsGroup, this.removeBadItem, null, this);
+
+        this.powerup = this.sound.add("powerup", {loop: false});
+        this.jump = this.sound.add("jump", {loop: false, volume: 0.3});
     }
 
     // Adjusts camera so that it stays within the bounds of the game
@@ -374,6 +395,11 @@ class LevelOne extends Phaser.Scene {
         this.player2ItemText = this.add.text(this.player2.x - 33, this.player2.y - 40, "Player 2")
         this.player1ItemText.setVisible(false);
         this.player2ItemText.setVisible(false);
+
+        this.player1NameText = this.add.text(this.player1.x - 33, this.player1.y - 40, this.player1Name)
+        this.player2NameText = this.add.text(this.player2.x - 33, this.player2.y - 40, this.player2Name)
+
+        this.displayNames = Date.now();
 
         //Player 1
         // Do this when character runs left
@@ -481,9 +507,9 @@ class LevelOne extends Phaser.Scene {
         
                 // Spawns an item around the person who is losing
                     if (this.leader == this.player1){
-                        item = this.physics.add.sprite(Phaser.Math.Between(this.player2.body.position.x - 200, this.player2.body.position.x + 200), Phaser.Math.Between(this.player2.body.position.y - 400, this.player2.body.position.y + 400), 'item').setImmovable(true);
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player2.body.position.x - 400, this.player2.body.position.x + 400), Phaser.Math.Between(this.player2.body.position.y - 200, this.player2.body.position.y - 400), 'item').setImmovable(true);
                     } else {
-                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 200, this.player1.body.position.x + 200), Phaser.Math.Between(this.player1.body.position.y - 400, this.player1.body.position.y + 400), 'item').setImmovable(true);
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 400, this.player1.body.position.x + 400), Phaser.Math.Between(this.player1.body.position.y - 200, this.player1.body.position.y - 400), 'item').setImmovable(true);
                     }
                 item.body.setAllowGravity(false); // Makes items float
                 item.anims.play('spin'); // Starts animation
@@ -516,6 +542,7 @@ class LevelOne extends Phaser.Scene {
 
         // If player 1 has no powerups activates currently
         if (!this.player1Speed && !this.player1SuperJump && !this.player1Backwards){
+            this.powerup.play();
             let itemSelector = Phaser.Math.Between(0, 100);
             this.player1ItemStart = Date.now();
 
@@ -555,6 +582,7 @@ class LevelOne extends Phaser.Scene {
 
         // If player 2 has no powerups activates currently
         if (!this.player2Speed && !this.player2SuperJump && !this.player2Backwards){
+            this.powerup.play();
             let itemSelector = Phaser.Math.Between(0, 100);
             this.player2ItemStart = Date.now();
 
@@ -583,6 +611,18 @@ class LevelOne extends Phaser.Scene {
 
                 this.player1Backwards = true;
                 this.player1ItemStart = Date.now();
+            }
+        }
+    }
+
+    // Turns off the names above the players after 5 seconds
+    checkNameTime(){
+        if (!this.displayWinner){
+            let currTime = Date.now();
+
+            if (currTime - this.displayNames >= 1000 * 5){
+                this.player1NameText.setVisible(false);
+                this.player2NameText.setVisible(false);
             }
         }
     }
@@ -616,18 +656,24 @@ class LevelOne extends Phaser.Scene {
                 }
             }
         }
-
-      
-
-
     }
 
+    // Keeps item text above player's head
     updateItemText() {
         this.player1ItemText.x = this.player1.x - 37
         this.player1ItemText.y = this.player1.y - 40
 
         this.player2ItemText.x = this.player2.x - 37
         this.player2ItemText.y = this.player2.y - 40
+    }
+
+    // Keeps name text above player's head
+    updateNameText() {
+        this.player1NameText.x = this.player1.x - 30
+        this.player1NameText.y = this.player1.y - 44
+
+        this.player2NameText.x = this.player2.x - 30
+        this.player2NameText.y = this.player2.y - 44
     }
 
     // Determines what to do once a player wins
@@ -638,35 +684,45 @@ class LevelOne extends Phaser.Scene {
         if (this.player1.body.position.y > this.player2.body.position.y + 550){
             this.physics.pause();
 
-            // Stops text from being off centered
+            // Stops text from being off center
             if (!this.displayWinner){
+                // Displays winner text
                 this.add.image(screenCenterX, screenCenterY, 'gameoverGray').setAlpha(.5).setScale(5);
                 this.P2Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, '+ this.player2Name + ' wins!', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
                 this.P2Wins.setOrigin(.5)
                 this.displayWinner = true;
 
                 this.player2Wins += 1;
-                this.updateWins()
-
+                this.updateWins();
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
+
+                const clickButton = this.add.text(screenCenterX - 90 , screenCenterY + 40, 'Continue?', {fontSize: '35px', fill: '#000000', backgroundColor: "yellow"})
+                    .setInteractive()
+                    .on('pointerdown', () => this.nextScreen());
             }
         } else if (this.player2.body.position.y > this.player1.body.position.y + 550){
             this.physics.pause();
             
-            // Stops text from being off centered
+            // Stops text from being off center
             if (!this.displayWinner){
+                // Displays winner text
                 this.add.image(screenCenterX, screenCenterY, 'gameoverGray').setAlpha(.5).setScale(5);
                 this.P1Wins = this.add.text(screenCenterX, screenCenterY, 'Game Over, '+ this.player1Name + ' wins!', {fontSize: '60px', fill: '#000000', backgroundColor: "yellow"});
                 this.P1Wins.setOrigin(.5)
                 this.displayWinner = true;
 
+                // Updates wins and sends it to database
                 this.player1Wins += 1;
-                this.updateWins()
+                this.updateWins();
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
+
+                const clickButton = this.add.text(screenCenterX - 90, screenCenterY + 40, 'Continue?', {fontSize: '35px', fill: '#000000', backgroundColor: "yellow"})
+                    .setInteractive()
+                    .on('pointerdown', () => this.nextScreen());
             }
         }
     }
@@ -685,5 +741,19 @@ class LevelOne extends Phaser.Scene {
         let route = '/games/update/' + this.passcode
         // Sends Post
         fetch(route, options);
+    }
+
+    // Moves to the next level/endgame screen
+    nextScreen(){
+        // Goes to level 2
+        if ((this.player1Wins + this.player2Wins) == 1) {
+            location.href = "/LevelTwo";
+        // Goes to level 3
+        } else if (this.player1Wins != 2 && this.player2Wins != 2) {
+            location.href = "/LevelThree";
+        // Goes to End game
+        } else {
+            location.href = "/WinnerScreen";
+        }
     }
 }

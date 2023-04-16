@@ -62,22 +62,19 @@ app.get("/WinnerScreen", async (req, res) => {
   }
 })
 
+app.use(express.static(path.join(__dirname, '/../../Client/Phaser')))
+
+
 // Loads levels
 app.get('/LevelOne', (req, res) => {
-  app.use(express.static(path.join(__dirname, '/../../Client/Phaser')))
-  app.use(express.static(path.join(__dirname, '/../../Client/Phaser/LevelOne')))
   res.sendFile(path.join(__dirname, '../../Client/Phaser/LevelOne/index.html'));
 });
 
 app.get('/LevelTwo', (req, res) => {
-  app.use(express.static(path.join(__dirname, '/../../Client/Phaser')))
-  app.use(express.static(path.join(__dirname, '/../../Client/Phaser/LevelTwo')))
   res.sendFile(path.join(__dirname, '../../Client/Phaser/LevelTwo/index.html'));
 });
 
 app.get('/LevelThree', (req, res) => {
-  app.use(express.static(path.join(__dirname, '/../../Client/Phaser')))
-  app.use(express.static(path.join(__dirname, '/../../Client/Phaser/LevelThree')))
   res.sendFile(path.join(__dirname, '../../Client/Phaser/LevelThree/index.html'));
 });
 
