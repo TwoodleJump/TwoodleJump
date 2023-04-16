@@ -100,8 +100,6 @@ class LevelOne extends Phaser.Scene {
     }
 
     getData() {
-        var passcode = 1234
-        this.passcode = passcode;
 
         const options = {
             method: 'GET'
@@ -115,11 +113,9 @@ class LevelOne extends Phaser.Scene {
         }).then(data => {
             // If there is data, look for user
             if(data) {
-                // Find the row with the correct id and save it's index
-                //console.log(data)
+                // Looks through each saved game for the one with the correct passcode
                 for (let i = 0; i < data.length; i++){
-                    if (data[i]["passcode"] == passcode){
-                        console.log([data[i]])
+                    if (data[i]["passcode"] == sessionStorage.getItem("passcode")){
                         this.player1Name = data[i]["player1"];
                         this.player1Wins = data[i]["player1Wins"];
                         this.player2Name = data[i]["player2"];
@@ -128,6 +124,8 @@ class LevelOne extends Phaser.Scene {
                 }
             }
         })
+
+        this.passcode = sessionStorage.getItem("passcode");
     }
 
     // Controls up down left right moves for player one

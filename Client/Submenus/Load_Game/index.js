@@ -1,13 +1,11 @@
 // Finds form
-const create_game_form = document.getElementById("create_game_form")
+const create_game_form = document.getElementById("game_passcode_form")
 
 // Creates listener for when submit button is hit on form
 create_game_form.addEventListener("submit", (event) => {
     event.preventDefault(); // Stops page from refreshing
 
     // Data from form
-    let player_1_name = document.getElementById("player_1_name").value;
-    let player_2_name = document.getElementById("player_2_name").value;
     let passcode = document.getElementById("passcode").value;
 
     passcode = Number(passcode); // Turns passcode into nit
@@ -33,34 +31,29 @@ create_game_form.addEventListener("submit", (event) => {
         return;
     }
 
+    // // Prepares data to be posted
+    // const data = {first_name, last_name, id, points}
+    // const options = {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(data)
+    // }
 
-    // Prepares data to be posted
-    const data = {
-        "player1": player_1_name,
-        "player2": player_2_name,
-        "player1Wins": 0,
-        "player2Wins": 0,
-        "passcode": passcode,
-    }
-
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    }
-
-    // Sends Post
-    fetch('/create_game', options);
-
-    // Stores passcode to the browser so game can use it
-    sessionStorage.setItem("passcode", passcode); 
+    // // Sends Post
+    // fetch('/add', options);
     
-    // Goes to the first level
-    location.href = "/LevelOne";
-});
+    // // Deletes data within form
+    // document.getElementById("add-user-first_name").value = null;
+    // document.getElementById("add-user-last_name").value = null;
+    // document.getElementById("add-user-id").value = null;
+    // document.getElementById("add-user-points").value = null;
 
-document.getElementById("MainMenu").onclick = function () {   
+    location.href = "/LevelOne";
+
+})
+
+document.getElementById("MainMenu").onclick = function () {
     location.href = "/";
 };

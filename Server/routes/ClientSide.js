@@ -22,6 +22,46 @@ app.get('/CreateGameScreen', (req, res) => {
   }
 });
 
+app.get("/HowToPlay", async (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '../../Client/Submenus/How_To_Play/index.html'));
+  } catch (error) {
+    res.status(404).send({message: error.message})
+  }
+})
+
+app.get("/Credits", async (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '../../Client/Submenus/Credits/index.html'));
+  } catch (error) {
+    res.status(404).send({message: error.message})
+  }
+})
+
+app.get("/LoadGame", async (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '../../Client/Submenus/Load_Game/index.html'));
+  } catch (error) {
+    res.status(404).send({message: error.message})
+  }
+})
+
+app.get("/LeaderboardScreen", async (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '../../Client/Submenus/Leaderboard/index.html'));
+  } catch (error) {
+    res.status(404).send({message: error.message})
+  }
+})
+
+app.get("/WinnerScreen", async (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '../../Client/Submenus/Winner_Screen/index.html'));
+  } catch (error) {
+    res.status(404).send({message: error.message})
+  }
+})
+
 // Loads levels
 app.get('/LevelOne', (req, res) => {
   app.use(express.static(path.join(__dirname, '/../../Client/Phaser')))
