@@ -1,3 +1,0 @@
-This file makes the current folder not empty so GIT notices it.
-
-THIS CAN BE DELETED ONCE STARTED

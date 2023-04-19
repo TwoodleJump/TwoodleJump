@@ -5,9 +5,10 @@ var item;
 var floor;
 var timer
 
-class LevelOne extends Phaser.Scene {
+
+class LevelTwo extends Phaser.Scene {
     constructor(){
-        super("First_level");
+        super("Second_level");
         this.getData();
         this.floor;
         this.cursors;
@@ -31,7 +32,7 @@ class LevelOne extends Phaser.Scene {
         this.player1SuperJump = false;
         this.player1ItemText = false;
 
-        this.player2Name = sessionStorage.getItem("player2Name");;
+        this.player2Name = sessionStorage.getItem("player2Name");
         this.player2NameText;
         this.player2Wins = 0;
         this.player2ItemStart;
@@ -52,6 +53,7 @@ class LevelOne extends Phaser.Scene {
         this.jump;
         this.powerup;
 
+        this.getData();
     }
 
     // Loads assets into the game. The first parameter is what string that will be used to access the asset
@@ -98,7 +100,7 @@ class LevelOne extends Phaser.Scene {
         } else {
             this.playerTwoMovesBackwards(keys); //Checks for player 2 movements but makes them backwards (for powerup)
         }
- 
+    
         this.changeCamera(); // Changes the camera based on who is higher
         this.wrapPlayers(); // Allows players to wrap around the map
         this.spawnItem(); // Spawns items around the map every 10 seconds
@@ -115,7 +117,7 @@ class LevelOne extends Phaser.Scene {
         const options = {
             method: 'GET'
         }
-      
+        
         fetch('/games', options)
         .then(response => {
             if(response.ok) {
@@ -144,11 +146,11 @@ class LevelOne extends Phaser.Scene {
         if (!this.displayWinner){
             // Move left with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
-                this.player1.setVelocityX(-250);
+                this.player1.setVelocityX(-350);
                 this.player1.anims.play('left1', true);
             // Move right with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
-                this.player1.setVelocityX(250);
+                this.player1.setVelocityX(350);
                 this.player1.anims.play('right1', true);
 
             // Move left with speed boost
@@ -161,7 +163,7 @@ class LevelOne extends Phaser.Scene {
                 this.player1.anims.play('right1', true);
             // No Move
             }  else {
-                this.player1.setVelocityX(0);
+                this.player1.setDrag(150);
                 this.player1.anims.play('turn1');
             }
 
@@ -189,11 +191,11 @@ class LevelOne extends Phaser.Scene {
         if (!this.displayWinner){
             // Move left with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(-250);
+                this.player2.setVelocityX(-350);
                 this.player2.anims.play('left2', true);
             // Move right with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(250);
+                this.player2.setVelocityX(350);
                 this.player2.anims.play('right2', true);
             // Move left with speed boost
             } else if (keys.A.isDown && this.player2Speed){
@@ -205,7 +207,7 @@ class LevelOne extends Phaser.Scene {
                 this.player2.anims.play('right2', true);
             // No move
             }  else {
-                this.player2.setVelocityX(0);
+                this.player2.setDrag(150);
                 this.player2.anims.play('turn2');
             }
 
@@ -235,11 +237,11 @@ class LevelOne extends Phaser.Scene {
         if (!this.displayWinner){
             // Move right with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
-                this.player1.setVelocityX(250);
+                this.player1.setVelocityX(350);
                 this.player1.anims.play('right1', true);
             // Move left with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
-                this.player1.setVelocityX(-250);
+                this.player1.setVelocityX(-350);
                 this.player1.anims.play('left1', true);
             // Move right with speed boost
             }  else if (this.cursors.left.isDown && this.player1Speed) {
@@ -251,7 +253,7 @@ class LevelOne extends Phaser.Scene {
                 this.player1.anims.play('left1', true);
             // No Move
             }  else {
-                this.player1.setVelocityX(0);
+                this.player1.setDrag(150);
                 this.player1.anims.play('turn1');
             }
 
@@ -281,11 +283,11 @@ class LevelOne extends Phaser.Scene {
         if (!this.displayWinner){
             // Move right with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(250);
+                this.player2.setVelocityX(350);
                 this.player2.anims.play('right2', true);
             // Move left with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(-250);
+                this.player2.setVelocityX(-350);
                 this.player2.anims.play('left2', true);
             // Move right with speed boost
             }  else if (keys.A.isDown && this.player2Speed){
@@ -297,7 +299,7 @@ class LevelOne extends Phaser.Scene {
                 this.player2.anims.play('left2', true);
             // Move down with speed boost
             } else {
-                this.player2.setVelocityX(0);
+                this.player2.setDrag(150);
                 this.player2.anims.play('turn2');
             }
 
@@ -319,6 +321,7 @@ class LevelOne extends Phaser.Scene {
             }            
         }   
     }
+
 
     // If a player walks off the edge of the map (horizontally), move them to the other side
     wrapPlayers() {
@@ -481,22 +484,22 @@ class LevelOne extends Phaser.Scene {
     // Creates platforms
     createPlatforms(){
         platformsGroup = this.physics.add.staticGroup();
-		platformsGroup.enableBody = true;
+        platformsGroup.enableBody = true;
         this.physics.add.overlap(platformsGroup, this.itemsGroup, this.removeBadItem, null, this);
-		// Spawns 1000 tiles going up
-		for( var i = 0; i<1000; i++){
-			this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
-		}
+        // Spawns 1000 tiles going up
+        for( var i = 0; i<1000; i++){
+            this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
+        }
         this.physics.add.overlap(platform, this.itemsGroup, this.removeBadItem, null, this);
-	} 
+    } 
 
     // Adds tile to platformsGroup and spawns it
     spawnPlatform(x, y, type){
-		platform = platformsGroup.create(x, y, type);
-		platform.setImmovable();
-        platform.setScale(.5).refreshBody();
-		return platform;
-	}
+        platform = platformsGroup.create(x, y, type);
+        platform.setImmovable();
+        platform.setScale(.2).refreshBody();
+        return platform;
+    }
 
     spawnItem(){
         // Determines if 8 seconds have passed
@@ -522,7 +525,7 @@ class LevelOne extends Phaser.Scene {
             }
         }
 
-	}
+    }
 
     // Makes items not spawn in ground
     removeBadItem(ground, item){

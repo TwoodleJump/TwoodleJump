@@ -5,9 +5,9 @@ var item;
 var floor;
 var timer
 
-class LevelOne extends Phaser.Scene {
+class LevelThree extends Phaser.Scene {
     constructor(){
-        super("First_level");
+        super("Third_level");
         this.getData();
         this.floor;
         this.cursors;
@@ -31,7 +31,7 @@ class LevelOne extends Phaser.Scene {
         this.player1SuperJump = false;
         this.player1ItemText = false;
 
-        this.player2Name = sessionStorage.getItem("player2Name");;
+        this.player2Name = sessionStorage.getItem("player2Name");
         this.player2NameText;
         this.player2Wins = 0;
         this.player2ItemStart;
@@ -52,6 +52,7 @@ class LevelOne extends Phaser.Scene {
         this.jump;
         this.powerup;
 
+        this.getData();
     }
 
     // Loads assets into the game. The first parameter is what string that will be used to access the asset

@@ -4,6 +4,7 @@
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const SavedGames = require("./routes/SavedGamesRoutes");
+const ClientSide = require("./routes/ClientSide");
 const Leaderboard = require("./routes/LeaderboardRoutes");
 const express = require("express");
 const app = express();
@@ -11,6 +12,7 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(SavedGames);
+app.use(ClientSide);
 app.use(Leaderboard);
 
 /*
