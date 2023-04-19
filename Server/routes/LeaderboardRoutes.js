@@ -13,13 +13,16 @@ app.put("/players/update/:id", async (req, res) => {
         .status(404)
         .send({ message: `Player with ID ${id} not found` });
     }
-    player.numWins = req.body.numWins;
+    player.player = req.body.player || player.player;
+    // increment number of wins of player by 1
+    if (!player.numWins) player.numWins = 0;
+    player.numWins++;
 
     const updatedPlayer = await player.save();
 
     res.send(updatedPlayer);
   } catch (error) {
-    console.error(err);
+    console.error(error);
     res.status(500).send({ message: error.message });
   }
 });
