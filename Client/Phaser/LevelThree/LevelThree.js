@@ -3,7 +3,8 @@ var itemsGroup;
 var platform;
 var item;
 var floor;
-var timer
+var timer;
+var platformCount = 0;
 
 class LevelThree extends Phaser.Scene {
     constructor(){
@@ -104,12 +105,14 @@ class LevelThree extends Phaser.Scene {
         this.wrapPlayers(); // Allows players to wrap around the map
         this.spawnItem(); // Spawns items around the map every 10 seconds
         this.updateItemText(); // Make sures the item text is always above the user's head
-        this.updateNameText();
+        this.updateNameText(); // Moves the names so they are always above the character
         this.checkPowerUpTime(); // Removes powerups from players if they've been active longer than the treshhold
         this.checkNameTime(); // Removes names from player's head after a few seconds
         this.gameOver(); // Checks if the game is complete
-        
 
+        platformsGroup.getChildren().forEach(platform => {
+            this.wrapPlatforms(platform);
+        })
     }
 
     getData() {
@@ -145,11 +148,11 @@ class LevelThree extends Phaser.Scene {
         if (!this.displayWinner){
             // Move left with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
-                this.player1.setVelocityX(-250);
+                this.player1.setVelocityX(-350);
                 this.player1.anims.play('left1', true);
             // Move right with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
-                this.player1.setVelocityX(250);
+                this.player1.setVelocityX(350);
                 this.player1.anims.play('right1', true);
 
             // Move left with speed boost
@@ -190,11 +193,11 @@ class LevelThree extends Phaser.Scene {
         if (!this.displayWinner){
             // Move left with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(-250);
+                this.player2.setVelocityX(-350);
                 this.player2.anims.play('left2', true);
             // Move right with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(250);
+                this.player2.setVelocityX(350);
                 this.player2.anims.play('right2', true);
             // Move left with speed boost
             } else if (keys.A.isDown && this.player2Speed){
@@ -236,11 +239,11 @@ class LevelThree extends Phaser.Scene {
         if (!this.displayWinner){
             // Move right with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
-                this.player1.setVelocityX(250);
+                this.player1.setVelocityX(350);
                 this.player1.anims.play('right1', true);
             // Move left with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
-                this.player1.setVelocityX(-250);
+                this.player1.setVelocityX(-350);
                 this.player1.anims.play('left1', true);
             // Move right with speed boost
             }  else if (this.cursors.left.isDown && this.player1Speed) {
@@ -282,11 +285,11 @@ class LevelThree extends Phaser.Scene {
         if (!this.displayWinner){
             // Move right with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(250);
+                this.player2.setVelocityX(350);
                 this.player2.anims.play('right2', true);
             // Move left with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
-                this.player2.setVelocityX(-250);
+                this.player2.setVelocityX(-350);
                 this.player2.anims.play('left2', true);
             // Move right with speed boost
             }  else if (keys.A.isDown && this.player2Speed){
@@ -333,6 +336,15 @@ class LevelThree extends Phaser.Scene {
             this.player2.body.position.x = game.config.width
         } else if (this.player2.body.position.x > game.config.width) {
             this.player2.body.position.x = 0
+        }
+    }
+
+    // If a platform goes off the edge of the map (horizontally), move them to the other side
+    wrapPlatforms(platform) {
+        if (platform.body.position.x < -200){
+            platform.body.position.x = game.config.width
+        } else if (platform.body.position.x > game.config.width) {
+            platform.body.position.x = -200
         }
     }
 
@@ -481,21 +493,31 @@ class LevelThree extends Phaser.Scene {
 
     // Creates platforms
     createPlatforms(){
-        platformsGroup = this.physics.add.staticGroup();
+        platformsGroup = this.physics.add.group();
 		platformsGroup.enableBody = true;
         this.physics.add.overlap(platformsGroup, this.itemsGroup, this.removeBadItem, null, this);
 		// Spawns 1000 tiles going up
 		for( var i = 0; i<1000; i++){
 			this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
 		}
-        this.physics.add.overlap(platform, this.itemsGroup, this.removeBadItem, null, this);
+        // this.physics.add.overlap(platform, this.itemsGroup, this.removeBadItem, null, this);
 	} 
 
     // Adds tile to platformsGroup and spawns it
     spawnPlatform(x, y, type){
-		platform = platformsGroup.create(x, y, type);
-		platform.setImmovable();
+        const platform = platformsGroup.create(x, y, type);
         platform.setScale(.5).refreshBody();
+        platform.body.allowGravity = false;
+        platform.body.immovable = true;
+
+        if (platformCount == 0) {
+            platformCount += 1;
+            platform.setVelocityX(Phaser.Math.Between(100, 250));
+        } else {
+            platform.setVelocityX(Phaser.Math.Between(-100, -250));
+            platformCount = 0;
+        }
+
 		return platform;
 	}
 
