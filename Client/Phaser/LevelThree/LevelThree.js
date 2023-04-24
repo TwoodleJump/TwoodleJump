@@ -110,9 +110,9 @@ class LevelThree extends Phaser.Scene {
         }
 
         if (this.player2GhostHit) {
-            this.playerTwoGhostMovement(keys);
+            this.playerTwoGhostMovement();
         } else if (this.player2Backwards){
-            this.playerTwoMovesBackwards();
+            this.playerTwoMovesBackwards(keys);
         } else {
             this.playerTwoMoves(keys);
         }
