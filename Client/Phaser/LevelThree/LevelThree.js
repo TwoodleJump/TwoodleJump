@@ -1,4 +1,5 @@
 var platformsGroup;
+var ghostsGroup;
 var itemsGroup;
 var platform;
 var item;
@@ -31,6 +32,8 @@ class LevelThree extends Phaser.Scene {
         this.player1Backwards = false;
         this.player1SuperJump = false;
         this.player1ItemText = false;
+        this.player1GhostHit = false;
+        this.player1GhostHitTime = 0;
 
         this.player2Name = sessionStorage.getItem("player2Name");
         this.player2NameText;
@@ -40,6 +43,8 @@ class LevelThree extends Phaser.Scene {
         this.player2Backwards = false;
         this.player2SuperJump = false;
         this.player2ItemText = false;
+        this.player2GhostHit = false;
+        this.player2GhostHitTime = 0;
 
         this.displayWinner = false;
         this.displayP1Item = false;
@@ -63,6 +68,7 @@ class LevelThree extends Phaser.Scene {
         this.load.spritesheet('item', 'assets/itemBox.png', { frameWidth: 64, frameHeight: 64 });
         this.load.image('ground', 'assets/ground.png');
         this.load.image('gameoverGray', 'assets/gameoverGray.png')
+        this.load.image('ghost', 'assets/ghost.png')
         this.load.audio("jump", ["assets/jump.mp3"])
         this.load.audio("powerup", ["assets/Powerup.mp3"])
         this.load.spritesheet('player1', 
@@ -77,7 +83,7 @@ class LevelThree extends Phaser.Scene {
 
     // Puts those assets and such into the game
     create () {
-        this.createBackground();
+        this.createBackground(); // Makes sure the background repeats vertically
         this.createEnvironment(); // Spawns in platforms and ground
         this.createPlayers(); // Spawns in players
         this.initCameras(); // Makes sure the camera stays locked on the x axis and moves up
@@ -89,17 +95,22 @@ class LevelThree extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         var keys = this.input.keyboard.addKeys("W,A,S,D"); // Allows character to be moved with WASD
-        if (!this.player1Backwards){
-            this.playerOneMoves() //Checks for player 1 movements
+        if (this.player1GhostHit) {
+            this.playerOneGhostMovement();
+        } else if (this.player1Backwards){
+            this.playerOneMovesBackwards();
         } else {
-            this.playerOneMovesBackwards() //Checks for player 1 movements but makes them backwards (for powerup)
+            this.playerOneMoves();
         }
 
-        if (!this.player2Backwards){
-            this.playerTwoMoves(keys); //Checks for player 2 movements
+        if (this.player2GhostHit) {
+            this.playerTwoGhostMovement(keys);
+        } else if (this.player2Backwards){
+            this.playerTwoMovesBackwards();
         } else {
-            this.playerTwoMovesBackwards(keys); //Checks for player 2 movements but makes them backwards (for powerup)
+            this.playerTwoMoves(keys);
         }
+
  
         this.changeCamera(); // Changes the camera based on who is higher
         this.wrapPlayers(); // Allows players to wrap around the map
@@ -108,13 +119,22 @@ class LevelThree extends Phaser.Scene {
         this.updateNameText(); // Moves the names so they are always above the character
         this.checkPowerUpTime(); // Removes powerups from players if they've been active longer than the treshhold
         this.checkNameTime(); // Removes names from player's head after a few seconds
+        this.P1GhostTimeCheck(); // Determines if ghost movement can be turned off for p1
+        this.P2GhostTimeCheck(); // Determines if ghost movement can be turned off for p2
         this.gameOver(); // Checks if the game is complete
 
+        // Wraps platforms around stage
         platformsGroup.getChildren().forEach(platform => {
-            this.wrapPlatforms(platform);
+            this.wrapStage(platform);
+        })
+
+        // Wraps ghost around stage
+        ghostsGroup.getChildren().forEach(ghost => {
+            this.wrapStage(ghost);
         })
     }
 
+    // Gets names and wins from database
     getData() {
         const options = {
             method: 'GET'
@@ -141,6 +161,229 @@ class LevelThree extends Phaser.Scene {
         })
 
         this.passcode = sessionStorage.getItem("passcode");
+    }
+
+    // Creates platforms and ground for player to stand on
+    createEnvironment(){
+        // Creates platforms for players to jump on
+        this.createPlatforms();
+        this.createItems();
+
+        // Adds floor to map
+        this.floor = this.physics.add.staticGroup();
+        this.floor.create(game.config.width/2, 750, 'ground').setScale(1).refreshBody();
+
+        this.physics.add.overlap(this.floor, this.itemsGroup, this.removeBadItem, null, this);
+
+        this.powerup = this.sound.add("powerup", {loop: false});
+        this.jump = this.sound.add("jump", {loop: false, volume: 0.3});
+    }
+
+    // Adjusts camera so that it stays within the bounds of the game
+    initCameras(){
+        this.cameras.main.centerOnX(game.config.width/2); // Locks camera to center of stage
+        this.physics.world.setBounds(0, 0, game.config.width, game.config.height, false, false, false, true); // Makes the stage infinite
+    }
+
+    // Creates the players, collisions, and animations
+    createPlayers(){
+        // Spawns players
+        this.player1 = this.physics.add.sprite(680, 600, 'player1');
+        this.player2 = this.physics.add.sprite(600, 600, 'player2');
+
+        this.player1.body.setGravityY(300); // Sets gravity for player
+        this.player1.setCollideWorldBounds(true); // Stops sprite from running off the stage
+        this.physics.add.collider(this.player1, this.floor); // Makes player not fall through floor
+        this.physics.add.collider(this.player1, platformsGroup); // Makes player not fall through platform
+        this.physics.add.overlap(this.player1, this.itemsGroup, this.itemCollectP1, null, this); // What happens when player1 picks up an item
+        this.physics.add.overlap(this.player1, ghostsGroup, this.P1GhostHit, null, this); // What happens when player1 touches a ghost
+
+        this.player2.body.setGravityY(300); // Sets gravity for player
+        this.player2.setCollideWorldBounds(true); // Stops sprite from running off the stage
+        this.physics.add.collider(this.player2, this.floor); // Makes player not fall through floor
+        this.physics.add.collider(this.player2, platformsGroup); // Makes player not fall through platform
+        this.physics.add.overlap(this.player2, this.itemsGroup, this.itemCollectP2, null, this); // What happens when player1 picks up an item
+        this.physics.add.overlap(this.player2, ghostsGroup, this.P2GhostHit, null, this); // What happens when player2 touches a ghost
+
+        this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother 
+        
+        this.player1ItemText = this.add.text(this.player1.x - 33, this.player1.y - 40, "Player 1")
+        this.player2ItemText = this.add.text(this.player2.x - 33, this.player2.y - 40, "Player 2")
+        this.player1ItemText.setVisible(false);
+        this.player2ItemText.setVisible(false);
+
+        this.player1NameText = this.add.text(this.player1.x - 33, this.player1.y - 40, this.player1Name)
+        this.player2NameText = this.add.text(this.player2.x - 33, this.player2.y - 40, this.player2Name)
+
+        this.displayNames = Date.now();
+
+        //Player 1
+        // Do this when character runs left
+        this.anims.create({
+            key: 'left1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 17, end: 23 }), // Chooses the frames from the frame sheet
+            frameRate: 15, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+        // Do this when character isn't moving
+        this.anims.create({
+            key: 'turn1',
+            frames: [ { key: 'player1', frame: 0 } ],
+            frameRate: 20 // fps
+        });
+
+        // Do this when character runs left
+        this.anims.create({
+            key: 'right1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 4, end: 11 }),
+            frameRate: 15, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+        this.anims.create({
+            key: 'jump1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 0, end: 4 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        //Player 2
+        // Do this when character runs left
+        this.anims.create({
+            key: 'left2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 17, end: 23 }), // Chooses the frames from the frame sheet
+            frameRate: 15, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+        // Do this when character isn't moving
+        this.anims.create({
+            key: 'turn2',
+            frames: [ { key: 'player2', frame: 0 } ],
+            frameRate: 20 // fps
+        });
+
+        // Do this when character runs left
+        this.anims.create({
+            key: 'right2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 4, end: 11 }),
+            frameRate: 15, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+
+        this.anims.create({
+            key: 'spin',
+            frames: this.anims.generateFrameNumbers('item', { start: 0, end: 6 }), // Chooses the frames from the frame sheet
+            frameRate: 10, // fps
+            repeat: -1 // Tells animation to loop
+        });
+
+        this.anims.create({
+            key: 'stop',
+            frames: [ { key: 'item', frame: 4 } ],
+            frameRate: 20 // fps
+        });
+
+    }
+    
+    // Creates an item group
+    createItems() {
+        this.itemsGroup = this.add.group();
+        this.itemsGroup.enableBody = true;
+    }
+
+    // Creates platforms
+    createPlatforms(){
+        platformsGroup = this.physics.add.group();
+        ghostsGroup = this.physics.add.group();
+		platformsGroup.enableBody = true;
+        this.physics.add.overlap(platformsGroup, this.itemsGroup, this.removeBadItem, null, this);
+
+		// Spawns 1000 tiles going up
+		for( var i = 0; i<1000; i++){
+			this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
+		}
+	} 
+
+    // Adds tile to platformsGroup and spawns it
+    spawnPlatform(x, y, type){
+        const platform = platformsGroup.create(x, y, type);
+        platform.setScale(.5).refreshBody();
+        platform.body.allowGravity = false;
+        platform.body.immovable = true;
+
+        if (platformCount == 0) {
+            let speed = Phaser.Math.Between(100, 250);
+            platformCount += 1;
+            platform.setVelocityX(speed);
+
+            let random = Phaser.Math.Between(1, 5);
+
+            if (random == 1){
+                const ghost = ghostsGroup.create(x, y - 50, 'ghost');
+                ghost.setScale(.05).refreshBody();
+                ghost.body.allowGravity = false;
+                ghost.body.immovable = true;
+                ghost.setVelocityX(speed - 70);
+            }
+        } else {
+            let speed = Phaser.Math.Between(-100, -250);
+            platformCount = 0;
+            platform.setVelocityX(speed);
+
+            let random = Phaser.Math.Between(1, 5);
+
+            if (random == 1){
+                const ghost = ghostsGroup.create(x, y - 50, 'ghost');
+                ghost.setScale(.05).refreshBody();
+                ghost.body.allowGravity = false;
+                ghost.body.immovable = true;
+                ghost.setVelocityX(speed + 70);
+            }
+        }
+
+		return platform;
+	}
+
+    // Spawns item in game
+    spawnItem(){
+        // Determines if 8 seconds have passed
+        if (!this.displayWinner) {
+            let currTime = Date.now()
+
+            if (Date.now() - this.pastTime >= 1000 * 8){
+        
+                // Spawns an item around the person who is losing
+                    if (this.leader == this.player1){
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player2.body.position.x - 400, this.player2.body.position.x + 400), Phaser.Math.Between(this.player2.body.position.y - 200, this.player2.body.position.y - 400), 'item').setImmovable(true);
+                    } else {
+                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 400, this.player1.body.position.x + 400), Phaser.Math.Between(this.player1.body.position.y - 200, this.player1.body.position.y - 400), 'item').setImmovable(true);
+                    }
+                item.body.setAllowGravity(false); // Makes items float
+                item.anims.play('spin'); // Starts animation
+
+                this.itemsGroup.add(item);
+    
+                this.pastTime = currTime;
+                return item;
+    
+            }
+        }
+
+	}
+
+    // Makes items not spawn in ground
+    removeBadItem(ground, item){
+        item.setVisible(true);
+    }
+
+    // Creates continuous background with 1280x720 background photo
+    createBackground(){
+        for(var i = 0; i < 1000; i++){
+            this.add.image(game.config.width/2, game.config.height/2 - (game.config.height * i), 'sky'); // Adds the background photo to center of screen
+        }
     }
 
     // Controls up down left right moves for player one
@@ -187,7 +430,7 @@ class LevelThree extends Phaser.Scene {
             }
         }
     }
-
+    
     // Controls WASD moves for player Two
     playerTwoMoves(keys) {       
         if (!this.displayWinner){
@@ -324,6 +567,56 @@ class LevelThree extends Phaser.Scene {
         }   
     }
 
+    // Movement controls when player1 hits ghosts
+    playerOneGhostMovement() {
+        this.player1.setVelocityX(0);
+        this.player1.anims.play('turn1');
+    }
+
+    // Movement controls when player2 hits ghosts
+    playerTwoGhostMovement() {
+        this.player2.setVelocityX(0);
+        this.player2.anims.play('turn2');
+    }
+
+    // Sets the current time that player1 got hit by the ghost and sets variable to true
+    P1GhostHit() {
+        this.player1GhostHitTime = Date.now();
+        this.player1.setAlpha(.5);
+        this.player1GhostHit = true;
+    }
+
+    // Sets the current time that player2 got hit by the ghost and sets variable to true
+    P2GhostHit() {
+        this.player2GhostHitTime = Date.now();
+        this.player2.setAlpha(.5);
+        this.player2GhostHit = true;
+    }
+
+    // Turns off the ghostHit effect after a certain amount of time for p1
+    P1GhostTimeCheck(){
+        if (this.player1GhostHit){
+            let currTime = Date.now();
+
+            if (currTime - this.player1GhostHitTime >= 1000 * 2){
+                this.player1.setAlpha(1);
+                this.player1GhostHit = false;
+            }
+        }
+    }
+
+    // Turns off the ghostHit effect after a certain amount of time for p2
+    P2GhostTimeCheck(){
+        if (this.player2GhostHit){
+            let currTime = Date.now();
+
+            if (currTime - this.player2GhostHitTime >= 1000 * 2){
+                this.player2.setAlpha(1);
+                this.player2GhostHit = false;
+            }
+        }
+    }
+
     // If a player walks off the edge of the map (horizontally), move them to the other side
     wrapPlayers() {
         if (this.player1.body.position.x < 0){
@@ -340,11 +633,11 @@ class LevelThree extends Phaser.Scene {
     }
 
     // If a platform goes off the edge of the map (horizontally), move them to the other side
-    wrapPlatforms(platform) {
-        if (platform.body.position.x < -200){
-            platform.body.position.x = game.config.width
-        } else if (platform.body.position.x > game.config.width) {
-            platform.body.position.x = -200
+    wrapStage(object) {
+        if (object.body.position.x < -200){
+            object.body.position.x = game.config.width
+        } else if (object.body.position.x > game.config.width) {
+            object.body.position.x = -200
         }
     }
 
@@ -361,203 +654,7 @@ class LevelThree extends Phaser.Scene {
             this.leader = this.player2;
         }
     }
-
-    // Creates platforms and ground for player to stand on
-    createEnvironment(){
-        // Creates platforms for players to jump on
-        this.createPlatforms();
-        this.createItems();
-
-        // Adds floor to map
-        this.floor = this.physics.add.staticGroup();
-        this.floor.create(game.config.width/2, 750, 'ground').setScale(1).refreshBody();
-
-        this.physics.add.overlap(this.floor, this.itemsGroup, this.removeBadItem, null, this);
-
-        this.powerup = this.sound.add("powerup", {loop: false});
-        this.jump = this.sound.add("jump", {loop: false, volume: 0.3});
-    }
-
-    // Adjusts camera so that it stays within the bounds of the game
-    initCameras(){
-        this.cameras.main.centerOnX(game.config.width/2); // Locks camera to center of stage
-        this.physics.world.setBounds(0, 0, game.config.width, game.config.height, false, false, false, true); // Makes the stage infinite
-    }
-
-    // Creates the players, collisions, and animations
-    createPlayers(){
-        // Spawns players
-        this.player1 = this.physics.add.sprite(680, 600, 'player1');
-        this.player2 = this.physics.add.sprite(600, 600, 'player2');
-
-        this.player1.body.setGravityY(300); // Sets gravity for player
-        this.player1.setCollideWorldBounds(true); // Stops sprite from running off the stage
-        this.physics.add.collider(this.player1, this.floor); // Makes player not fall through floor
-        this.physics.add.collider(this.player1, platformsGroup); // Makes player not fall through platform
-        this.physics.add.overlap(this.player1, this.itemsGroup, this.itemCollectP1, null, this);
-
-        this.player2.body.setGravityY(300); // Sets gravity for player
-        this.player2.setCollideWorldBounds(true); // Stops sprite from running off the stage
-        this.physics.add.collider(this.player2, this.floor); // Makes player not fall through floor
-        this.physics.add.collider(this.player2, platformsGroup); // Makes player not fall through platform
-        this.physics.add.overlap(this.player2, this.itemsGroup, this.itemCollectP2, null, this);
-
-        this.physics.add.collider(this.player1, this.player2) //Allows both players to hit eachother 
-        
-        this.player1ItemText = this.add.text(this.player1.x - 33, this.player1.y - 40, "Player 1")
-        this.player2ItemText = this.add.text(this.player2.x - 33, this.player2.y - 40, "Player 2")
-        this.player1ItemText.setVisible(false);
-        this.player2ItemText.setVisible(false);
-
-        this.player1NameText = this.add.text(this.player1.x - 33, this.player1.y - 40, this.player1Name)
-        this.player2NameText = this.add.text(this.player2.x - 33, this.player2.y - 40, this.player2Name)
-
-        this.displayNames = Date.now();
-
-        //Player 1
-        // Do this when character runs left
-        this.anims.create({
-            key: 'left1',
-            frames: this.anims.generateFrameNumbers('player1', { start: 17, end: 23 }), // Chooses the frames from the frame sheet
-            frameRate: 15, // fps
-            repeat: -1 // Tells animation to loop
-        });
-
-        // Do this when character isn't moving
-        this.anims.create({
-            key: 'turn1',
-            frames: [ { key: 'player1', frame: 0 } ],
-            frameRate: 20 // fps
-        });
-
-        // Do this when character runs left
-        this.anims.create({
-            key: 'right1',
-            frames: this.anims.generateFrameNumbers('player1', { start: 4, end: 11 }),
-            frameRate: 15, // fps
-            repeat: -1 // Tells animation to loop
-        });
-
-        this.anims.create({
-            key: 'jump1',
-            frames: this.anims.generateFrameNumbers('player1', { start: 0, end: 4 }),
-            frameRate: 8, // fps
-            repeat: -1
-        });
-
-        //Player 2
-        // Do this when character runs left
-        this.anims.create({
-            key: 'left2',
-            frames: this.anims.generateFrameNumbers('player2', { start: 17, end: 23 }), // Chooses the frames from the frame sheet
-            frameRate: 15, // fps
-            repeat: -1 // Tells animation to loop
-        });
-
-        // Do this when character isn't moving
-        this.anims.create({
-            key: 'turn2',
-            frames: [ { key: 'player2', frame: 0 } ],
-            frameRate: 20 // fps
-        });
-
-        // Do this when character runs left
-        this.anims.create({
-            key: 'right2',
-            frames: this.anims.generateFrameNumbers('player2', { start: 4, end: 11 }),
-            frameRate: 15, // fps
-            repeat: -1 // Tells animation to loop
-        });
-
-
-        this.anims.create({
-            key: 'spin',
-            frames: this.anims.generateFrameNumbers('item', { start: 0, end: 6 }), // Chooses the frames from the frame sheet
-            frameRate: 10, // fps
-            repeat: -1 // Tells animation to loop
-        });
-
-        this.anims.create({
-            key: 'stop',
-            frames: [ { key: 'item', frame: 4 } ],
-            frameRate: 20 // fps
-        });
-
-    }
     
-    // Creates an item group
-    createItems() {
-        this.itemsGroup = this.add.group();
-        this.itemsGroup.enableBody = true;
-    }
-
-    // Creates platforms
-    createPlatforms(){
-        platformsGroup = this.physics.add.group();
-		platformsGroup.enableBody = true;
-        this.physics.add.overlap(platformsGroup, this.itemsGroup, this.removeBadItem, null, this);
-		// Spawns 1000 tiles going up
-		for( var i = 0; i<1000; i++){
-			this.spawnPlatform( Phaser.Math.Between( 150, this.physics.world.bounds.width - 150 ), this.physics.world.bounds.height - 200 - 200 * i, 'platform');
-		}
-        // this.physics.add.overlap(platform, this.itemsGroup, this.removeBadItem, null, this);
-	} 
-
-    // Adds tile to platformsGroup and spawns it
-    spawnPlatform(x, y, type){
-        const platform = platformsGroup.create(x, y, type);
-        platform.setScale(.5).refreshBody();
-        platform.body.allowGravity = false;
-        platform.body.immovable = true;
-
-        if (platformCount == 0) {
-            platformCount += 1;
-            platform.setVelocityX(Phaser.Math.Between(100, 250));
-        } else {
-            platform.setVelocityX(Phaser.Math.Between(-100, -250));
-            platformCount = 0;
-        }
-
-		return platform;
-	}
-
-    spawnItem(){
-        // Determines if 8 seconds have passed
-        if (!this.displayWinner) {
-            let currTime = Date.now()
-
-            if (Date.now() - this.pastTime >= 1000 * 8){
-        
-                // Spawns an item around the person who is losing
-                    if (this.leader == this.player1){
-                        item = this.physics.add.sprite(Phaser.Math.Between(this.player2.body.position.x - 400, this.player2.body.position.x + 400), Phaser.Math.Between(this.player2.body.position.y - 200, this.player2.body.position.y - 400), 'item').setImmovable(true);
-                    } else {
-                        item = this.physics.add.sprite(Phaser.Math.Between(this.player1.body.position.x - 400, this.player1.body.position.x + 400), Phaser.Math.Between(this.player1.body.position.y - 200, this.player1.body.position.y - 400), 'item').setImmovable(true);
-                    }
-                item.body.setAllowGravity(false); // Makes items float
-                item.anims.play('spin'); // Starts animation
-
-                this.itemsGroup.add(item);
-    
-                this.pastTime = currTime;
-                return item;
-    
-            }
-        }
-
-	}
-
-    // Makes items not spawn in ground
-    removeBadItem(ground, item){
-        item.setVisible(true);
-    }
-
-    // Creates continuous background with 1280x720 background photo
-    createBackground(){
-        for(var i = 0; i < 1000; i++){
-            this.add.image(game.config.width/2, game.config.height/2 - (game.config.height * i), 'sky'); // Adds the background photo to center of screen
-        }
-    }
 
     // Randomly chooses an item for p1 if they touch an item block
     itemCollectP1(player, item){
@@ -750,6 +847,7 @@ class LevelThree extends Phaser.Scene {
         }
     }
 
+    // Updates the wins in the database
     updateWins() {
         // Prepares data to be posted
         const data = {"player1": this.player1Name, "player2": this.player2Name, "player1Wins": this.player1Wins, "player2Wins": this.player2Wins}
