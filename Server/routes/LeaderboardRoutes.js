@@ -21,6 +21,10 @@ app.put("/players/update/:player", async (req, res) => {
 
     res.send(updatedPlayer);
   } catch (error) {
+<<<<<<< HEAD
+=======
+    console.error(error);
+>>>>>>> a11e2924c22630de39f4fe0164c1d8d49b6bc51f
     res.status(500).send({ message: error.message });
   }
 });
