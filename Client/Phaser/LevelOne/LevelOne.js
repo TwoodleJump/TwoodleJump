@@ -746,6 +746,7 @@ class LevelOne extends Phaser.Scene {
 
                 this.player2Wins += 1;
                 this.updateWins();
+                this.updateLeaderboard(this.player2Name);
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
@@ -765,9 +766,12 @@ class LevelOne extends Phaser.Scene {
                 this.P1Wins.setOrigin(.5)
                 this.displayWinner = true;
 
+
+
                 // Updates wins and sends it to database
                 this.player1Wins += 1;
                 this.updateWins();
+                this.updateLeaderboard(this.player1Name);
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
@@ -798,6 +802,31 @@ class LevelOne extends Phaser.Scene {
         sessionStorage.setItem("player2Wins", this.player2Wins);
     }
 
+    // updates leaderboard database
+    async updateLeaderboard(name) {
+        const createUrl = '/create_player';
+        const updateUrl = '/players/update/' + name;
+        const data = { player: name, numWins: 1 };
+
+        try {
+            const response = await fetch(createUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+            });
+
+            if (response.status === 409) {
+                await fetch(updateUrl, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                });
+            } 
+        } catch (error) {
+            console.error('Error updating leaderboard:', error);
+        }
+    }
+    
     // Moves to the next level/endgame screen
     nextScreen(){
         // Goes to level 2
