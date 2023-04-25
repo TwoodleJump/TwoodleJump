@@ -7,10 +7,17 @@ create_game_form.addEventListener("submit", (event) => {
     sessionStorage.setItem("passcode", ""); 
 
     let passcode = document.getElementById("passcode").value;
-    passcode = Number(passcode);
+
+    // Make sure passcode isn't blank
+    if (passcode == ""){
+        console.log("Passcode cannot be blank")
+        document.getElementById("passcode").value = "";
+    } else {
+        passcode = Number(passcode);
+        loadGame(passcode)
+    }
 
 
-    loadGame(passcode)
 })
 
 document.getElementById("MainMenu").onclick = function () {
@@ -56,6 +63,7 @@ async function loadGame(passcode) {
         nextScreen()
     // If no passcode was found, reset the passcode value
     } else {
+        console.log("Game not found")
         document.getElementById("passcode").value = "";
     }
 }
