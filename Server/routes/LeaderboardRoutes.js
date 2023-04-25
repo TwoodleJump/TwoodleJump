@@ -21,7 +21,6 @@ app.put("/players/update/:player", async (req, res) => {
 
     res.send(updatedPlayer);
   } catch (error) {
-    console.error(error);
     res.status(500).send({ message: error.message });
   }
 });
@@ -49,6 +48,23 @@ app.post("/create_player", async (req, res) => {
       await newPlayer.save();
       res.send(newPlayer);
     }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
+//DELETE
+app.delete("/players/delete/:player", async (req, res) => {
+  const playerName = req.params.player;
+  try {
+    const deletedPlayer = await LeaderboardModel.findOneAndDelete({ player: playerName });
+    if (!deletedPlayer) {
+      return res
+        .status(404)
+        .send({ message: `Player with name ${player} not found` });
+    }
+  
+    res.status(200).send(deletedPlayer)
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
