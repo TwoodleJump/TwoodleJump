@@ -3,22 +3,21 @@ const LeaderboardModel = require("../models/LeaderboardModel");
 const app = express();
 
 //PUT
-app.put("/players/update/:id", async (req, res) => {
-  const { id } = req.params;
-
+app.put("/players/update/:player", async (req, res) => {
+  const playerName = req.params.player;
   try {
-    const player = await LeaderboardModel.findById({ _id: id });
-    if (!player) {
+    const currPlayer = await LeaderboardModel.findOne({ player: playerName });
+    if (!currPlayer) {
       return res
         .status(404)
-        .send({ message: `Player with ID ${id} not found` });
+        .send({ message: `Player with name ${player} not found` });
     }
-    player.player = req.body.player || player.player;
-    // increment number of wins of player by 1
-    if (!player.numWins) player.numWins = 0;
-    player.numWins++;
 
-    const updatedPlayer = await player.save();
+    // increment number of wins of player by 1
+    if (!currPlayer.numWins) currPlayer.numWins = 0;
+    currPlayer.numWins++;
+
+    const updatedPlayer = await currPlayer.save();
 
     res.send(updatedPlayer);
   } catch (error) {
@@ -40,11 +39,16 @@ app.get("/players", async (req, res) => {
 
 //POST
 app.post("/create_player", async (req, res) => {
-  const players = new LeaderboardModel(req.body);
-
+  const { player, numWins } = req.body;
   try {
-    await players.save();
-    res.send(players);
+    const existingUser = await LeaderboardModel.findOne({ player });
+    if (existingUser) {
+      res.status(409).send("A user with that name already exists");
+    } else {
+      const newPlayer = new LeaderboardModel({ player, numWins });
+      await newPlayer.save();
+      res.send(newPlayer);
+    }
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
