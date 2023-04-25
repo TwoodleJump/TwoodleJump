@@ -4,8 +4,13 @@ const app = express();
 
 //POST
 app.post("/create_game", async (req, res) => {
-  const players = new SavedGameModel(req.body);
+  // Makes sure passcode hasn't been used before
+  const gameExists = await SavedGameModel.exists({ passcode: req.body.passcode });
+  if (gameExists){
+    return res.status(409).send({message: "Passcode already in use"})
+  }
 
+  const players = new SavedGameModel(req.body);
   try {
     await players.save();
     res.send(players);

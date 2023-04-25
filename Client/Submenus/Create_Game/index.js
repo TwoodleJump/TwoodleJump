@@ -2,7 +2,7 @@
 const create_game_form = document.getElementById("create_game_form")
 
 // Creates listener for when submit button is hit on form
-create_game_form.addEventListener("submit", (event) => {
+create_game_form.addEventListener("submit", async (event) => {
     event.preventDefault(); // Stops page from refreshing
 
     // Data from form
@@ -52,15 +52,22 @@ create_game_form.addEventListener("submit", (event) => {
     }
 
     // Sends Post
-    fetch('/create_game', options);
+    const response = await fetch('/create_game', options)
 
-    // Stores data for the game
-    sessionStorage.setItem("passcode", passcode); 
-    sessionStorage.setItem("player1Name", player_1_name);
-    sessionStorage.setItem("player2Name", player_2_name);
-    
-    // Goes to the first level
-    location.href = "/LevelOne";
+    // If the ID is alreay in use, erase it
+    if (response.status === 409){
+        console.log("Id already in use")
+        document.getElementById("passcode").value = null;
+    // Go to first level
+    } else {
+        // Stores data for the game
+        sessionStorage.setItem("passcode", passcode); 
+        sessionStorage.setItem("player1Name", player_1_name);
+        sessionStorage.setItem("player2Name", player_2_name);
+        
+        // Goes to the first level
+        location.href = "/LevelOne";
+    }
 });
 
 document.getElementById("MainMenu").onclick = function () {   
