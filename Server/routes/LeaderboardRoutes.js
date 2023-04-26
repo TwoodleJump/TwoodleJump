@@ -4,9 +4,9 @@ const app = express();
 
 //PUT
 app.put("/players/update/:player", async (req, res) => {
-  const playerName = req.params.player;
+  const { player } = req.params;
   try {
-    const currPlayer = await LeaderboardModel.findOne({ player: playerName });
+    const currPlayer = await LeaderboardModel.findOne({ player: player });
     if (!currPlayer) {
       return res
         .status(404)
@@ -55,9 +55,9 @@ app.post("/create_player", async (req, res) => {
 
 //DELETE
 app.delete("/players/delete/:player", async (req, res) => {
-  const playerName = req.params.player;
+  const { player } = req.params;
   try {
-    const deletedPlayer = await LeaderboardModel.findOneAndDelete({ player: playerName });
+    const deletedPlayer = await LeaderboardModel.findOneAndDelete({ player: player });
     if (!deletedPlayer) {
       return res
         .status(404)
