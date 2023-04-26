@@ -5,11 +5,13 @@
   max-width: 1000px;
   position: relative;
   margin: auto;
+  background-position: center 20px;
 }
 
 /* Hide the images by default */
 .mySlides {
   display: none;
+
 }
 
 /* Next & previous buttons */
@@ -85,10 +87,15 @@
     position: relative;
   }
   
-  .top-image {
+  .top-image1 {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 130px;
+    left: auto;
+    right: 200px;
+    border: 2px solid black; /* add border */
+    box-sizing: border-box; /* include border in element dimensions */
+
+
   }
 
   .textbox {
