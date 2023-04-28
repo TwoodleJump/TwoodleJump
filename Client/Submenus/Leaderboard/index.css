@@ -1,3 +1,96 @@
-table, th, td {
-    border: 1px solid;
-  }
+table {
+  width: 50%;
+  margin: auto;
+  border-collapse: collapse;
+  position: relative;
+}
+
+/* th is for table header and td is for table data */
+
+th,
+td {
+  padding: 15px;
+  text-align: left;
+  font-size: 20px;
+  font-family: "Monaco", monospace;
+}
+/* tr is for table row */
+tr:nth-child(even) {
+  background-color: rgba(247, 242, 236, 0.945);
+}
+tr:nth-child(odd) {
+  background-color: rgba(114, 112, 112, 0.075);
+}
+
+tr:nth-last-child(-n + 2) {
+  background-color: rgb(219, 240, 222);
+  border: 2px solid;
+  border-collapse: collapse;
+}
+
+td:nth-child(1) {
+  width: 50px;
+  font-size: 22px;
+}
+tr:first-child {
+  color: rgb(8, 8, 8);
+  background-color: #f7eae2;
+  font-size: 22px;
+  border: 1px solid;
+}
+
+/* using th does not work for some reason, but tr:first child does 
+th {
+  color: rgb(8, 8, 8);
+  background-color: #ffffff;
+  font-size: 100px;
+  border: 2px solid;
+} */
+
+tr:hover {
+  background-color: rgb(104, 201, 80);
+}
+
+button {
+  font-family: "Monaco", monospace;
+  position: absolute;
+  width: 17%;
+  margin: auto;
+  border-radius: 20px;
+  bottom: 20px;
+  left: 40px;
+  text-align: center;
+  background-color: #4caf50; /* Green */
+  border: 3px solid #4caf50;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 30px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  opacity: 0.8;
+}
+button:hover {
+  opacity: 1;
+}
+
+body {
+  background-color: rgba(255, 253, 208, 0.527);
+}
+h1 {
+  text-align: center;
+  margin: auto;
+  margin-bottom: 1%;
+  font-size: 60px;
+  font-family: "Monaco", monospace;
+  /*background-color: rgb(243, 236, 144);*/
+}
+h2 {
+  text-align: center;
+  font-size: 35px;
+  font-family: "Monaco", monospace;
+  margin: auto;
+  margin-bottom: 2%;
+}
