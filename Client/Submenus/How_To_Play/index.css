@@ -40,16 +40,45 @@
 .prev:hover, .next:hover {
   background-color: rgba(0,0,0,0.8);
 }
-
+header h1 {
+  text-align: center;
+  font-family: "Monaco", monospace;
+}
 /* Caption text */
-.text {
-  color: #f2f2f2;
+.player1text {
+  /* color: #111111;
+  font-family: "Monaco", monospace;
   font-size: 15px;
   padding: 8px 12px;
-  position: absolute;
-  bottom: 8px;
+  position: relative;
+  top: 0;
   width: 100%;
+  text-align: center; */
+  position: absolute;
+  top: 26%;
+  left: 30%;
+  font-family: "Monaco", monospace;
+  transform: translateX(-50%);
+  font-size: 20px;
+  font-weight: bold;
   text-align: center;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.player2text {
+  position: absolute;
+  top: 26%;
+  left: 65%;
+  font-family: "Monaco", monospace;
+  transform: translateX(-50%);
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 /* Number text (1/3 etc) */
@@ -89,18 +118,69 @@
   
   .top-image1 {
     position: absolute;
-    top: 130px;
+    top: 60px;
     left: auto;
-    right: 200px;
+    right: 65%;
     border: 2px solid black; /* add border */
     box-sizing: border-box; /* include border in element dimensions */
-
+    width: 30%;
+    height: 35%;
 
   }
 
+  .top-image2 {
+    position: absolute;
+    top: 60px;
+    left: auto;
+    right: 35%;
+    border: 2px solid black; /* add border */
+    box-sizing: border-box; /* include border in element dimensions */
+    width: 30%;
+    height: 35%;
+
+  }
+
+  .top-image3 {
+    position: absolute;
+    top: 60px;
+    left: auto;
+    right: 5%;
+    border: 2px solid black; /* add border */
+    box-sizing: border-box; /* include border in element dimensions */
+    width: 30%;
+    height: 35%;
+
+  }
+
+  .player-image1 {
+    position: absolute;
+    top: 60px;
+    left: auto;
+    right: 30%;
+    border: 2px solid black; /* add border */
+    box-sizing: border-box; /* include border in element dimensions */
+    width: 10%;
+    height: auto;
+
+  }
+
+  .player-image2 {
+    position: absolute;
+    top: 60px;
+    left: auto;
+    right: 65%;
+    border: 2px solid black; /* add border */
+    box-sizing: border-box; /* include border in element dimensions */
+    width: 10%;
+    height: auto;
+
+  }
+
+
   .textbox {
     background-color: wheat;
-    color: white;
+    font-family: "Monaco", monospace;
+    color: rgb(7, 7, 7);
     position: absolute;
     bottom: 0;
     left: 0;
@@ -120,3 +200,51 @@
   from {opacity: .4}
   to {opacity: 1}
 }
+
+video {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  height: auto;
+  z-index: 1;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/Client/Submenus/Images/background_3.png");
+  background-size: cover;
+  z-index: 0;
+}
+
+button {
+  font-family: "Monaco", monospace;
+  position: absolute;
+  width: 17%;
+  margin: auto;
+  border-radius: 20px;
+  bottom: 20px;
+  left: 40px;
+  text-align: center;
+  background-color: #4caf50; /* Green */
+  border: 3px solid #4caf50;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 30px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  opacity: 0.8;
+}
+button:hover {
+  opacity: 1;
+}
+
+
