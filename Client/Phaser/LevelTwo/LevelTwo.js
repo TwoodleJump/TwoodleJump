@@ -497,7 +497,7 @@ class LevelTwo extends Phaser.Scene {
     spawnPlatform(x, y, type){
         platform = platformsGroup.create(x, y, type);
         platform.setImmovable();
-        platform.setScale(.2).refreshBody();
+        platform.setScale(.5).refreshBody();
         return platform;
     }
 

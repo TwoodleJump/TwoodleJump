@@ -65,12 +65,13 @@ class LevelOne extends Phaser.Scene {
         this.load.audio("powerup", ["assets/Powerup.mp3"])
         this.load.spritesheet('player1', 
             'assets/blueGuy.png',
-            { frameWidth: 64, frameHeight: 72 }
+            { frameWidth: 54, frameHeight: 60 }
         );
         this.load.spritesheet('player2', 
             'assets/redGuy.png',
-            { frameWidth: 64, frameHeight: 72 }
+            { frameWidth: 54, frameHeight: 60 }
         );
+
     }
 
     // Puts those assets and such into the game
@@ -82,7 +83,8 @@ class LevelOne extends Phaser.Scene {
     }
 
     // Continually runs. Listens for players input.
-    update () {        
+    update () {   
+        
         // In essence an event listener that listens for keyboard presses
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -145,11 +147,19 @@ class LevelOne extends Phaser.Scene {
             // Move left with no speed boost
             if (this.cursors.left.isDown && !this.player1Speed) {
                 this.player1.setVelocityX(-250);
-                this.player1.anims.play('left1', true);
+                if (this.player1.body.touching.down) {
+                    this.player1.anims.play('left1', true);
+                } else {
+                    this.player1.anims.play('jumpLeft1', true);
+                }
             // Move right with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
                 this.player1.setVelocityX(250);
-                this.player1.anims.play('right1', true);
+                if (this.player1.body.touching.down) {
+                    this.player1.anims.play('right1', true);
+                } else {
+                    this.player1.anims.play('jumpRight1', true);
+                }
 
             // Move left with speed boost
             } else if (this.cursors.left.isDown && this.player1Speed) {
@@ -162,7 +172,16 @@ class LevelOne extends Phaser.Scene {
             // No Move
             }  else {
                 this.player1.setVelocityX(0);
-                this.player1.anims.play('turn1');
+                if(this.player1.body.touching.down) {
+                    this.player1.anims.play('turn1');
+                } else {
+                    if(this.player1.body.velocity.y <= 0){
+                        this.player1.anims.play('jumpRight1');
+                    } else {
+                        this.player1.anims.play('jumpRight2');
+                    }
+
+                }
             }
 
             // Make sure that player is touching ground before they can jump
@@ -426,8 +445,29 @@ class LevelOne extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'jump1',
-            frames: this.anims.generateFrameNumbers('player1', { start: 0, end: 4 }),
+            key: 'jumpRight1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 1, end: 1 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jumpRight2',
+            frames: this.anims.generateFrameNumbers('player1', { start: 3, end: 3 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jumpLeft1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 13, end: 13 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jumpLeft2',
+            frames: this.anims.generateFrameNumbers('player1', { start: 15, end: 15 }),
             frameRate: 8, // fps
             repeat: -1
         });
