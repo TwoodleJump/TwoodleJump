@@ -51,7 +51,9 @@ class LevelOne extends Phaser.Scene {
 
         this.jump;
         this.powerup;
-
+        this.song;
+        this.mutelogo;
+        this.unmutelogo;
     }
 
     // Loads assets into the game. The first parameter is what string that will be used to access the asset
@@ -61,8 +63,11 @@ class LevelOne extends Phaser.Scene {
         this.load.spritesheet('item', 'assets/itemBox.png', { frameWidth: 64, frameHeight: 64 });
         this.load.image('ground', 'assets/ground.png');
         this.load.image('gameoverGray', 'assets/gameoverGray.png')
+        this.load.image('unmute', 'assets/unmute.png')
+        this.load.image('mute', 'assets/mute.png')
         this.load.audio("jump", ["assets/jump.mp3"])
         this.load.audio("powerup", ["assets/Powerup.mp3"])
+        this.load.audio("song", ["assets/Bob-ombBattlefield.mp3"])
         this.load.spritesheet('player1', 
             'assets/blueGuy.png',
             { frameWidth: 54, frameHeight: 60 }
@@ -380,8 +385,55 @@ class LevelOne extends Phaser.Scene {
 
         this.physics.add.overlap(this.floor, this.itemsGroup, this.removeBadItem, null, this);
 
-        this.powerup = this.sound.add("powerup", {loop: false});
+        this.createMusic();
+    }
+
+    createMusic() {
+        this.powerup = this.sound.add("powerup", {loop: false, volume: 0.6});
         this.jump = this.sound.add("jump", {loop: false, volume: 0.3});
+
+        this.song = this.sound.add("song", {loop: true, volume: 0.1});
+
+        // Adds mute/unmute logo and locks it to the screen
+        this.muteLogo = this.add.sprite(50, 50, 'mute');
+        this.muteLogo.setScale(.3);
+        this.muteLogo.setOrigin(0.5, 0.5);
+        this.muteLogo.setScrollFactor(0);
+        this.muteLogo.fixedToCamera = true;
+        this.muteLogo.cameraOffset = {};
+        this.muteLogo.cameraOffset.y = 100 - this.cameras.main.scrollY;
+        this.muteLogo.setInteractive();
+        this.muteLogo.setVisible(false);
+
+        this.unmuteLogo = this.add.sprite(50, 50, 'unmute');
+        this.unmuteLogo.setScale(.3);
+        this.unmuteLogo.setOrigin(0.5, 0.5);
+        this.unmuteLogo.setScrollFactor(0);
+        this.unmuteLogo.fixedToCamera = true;
+        this.unmuteLogo.cameraOffset = {};
+        this.unmuteLogo.cameraOffset.y = 100 - this.cameras.main.scrollY;
+        this.unmuteLogo.setInteractive();
+
+        this.muteLogo.on('pointerdown', () => {
+            this.jump.volume = .3;
+            this.powerup.volume = .6;
+            this.song.volume = .1;
+
+            this.unmuteLogo.setVisible(true);
+            this.muteLogo.setVisible(false);
+        });
+
+        this.unmuteLogo.on('pointerdown', () => {
+            this.jump.volume = 0;
+            this.powerup.volume = 0;
+            this.song.volume = 0;
+
+            this.unmuteLogo.setVisible(false);
+            this.muteLogo.setVisible(true);
+        });
+
+        // Plays main theme
+        this.song.play();
     }
 
     // Adjusts camera so that it stays within the bounds of the game
@@ -734,6 +786,7 @@ class LevelOne extends Phaser.Scene {
 
                 this.player2Wins += 1;
                 this.updateWins();
+                this.updateLeaderboard(this.player2Name);
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
@@ -753,9 +806,12 @@ class LevelOne extends Phaser.Scene {
                 this.P1Wins.setOrigin(.5)
                 this.displayWinner = true;
 
+
+
                 // Updates wins and sends it to database
                 this.player1Wins += 1;
                 this.updateWins();
+                this.updateLeaderboard(this.player1Name);
 
                 this.player1.anims.play('turn1');
                 this.player2.anims.play('turn2');
@@ -786,6 +842,31 @@ class LevelOne extends Phaser.Scene {
         sessionStorage.setItem("player2Wins", this.player2Wins);
     }
 
+    // updates leaderboard database
+    async updateLeaderboard(name) {
+        const createUrl = '/create_player';
+        const updateUrl = '/players/update/' + name;
+        const data = { player: name, numWins: 1 };
+
+        try {
+            const response = await fetch(createUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+            });
+
+            if (response.status === 409) {
+                await fetch(updateUrl, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                });
+            } 
+        } catch (error) {
+            console.error('Error updating leaderboard:', error);
+        }
+    }
+    
     // Moves to the next level/endgame screen
     nextScreen(){
         // Goes to level 2
