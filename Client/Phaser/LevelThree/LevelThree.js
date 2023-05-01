@@ -73,17 +73,17 @@ class LevelThree extends Phaser.Scene {
         this.load.image('gameoverGray', 'assets/gameoverGray.png')
         this.load.image('unmute', 'assets/unmute.png')
         this.load.image('mute', 'assets/mute.png')
-        this.load.image('ghost', 'assets/ghost.png')
+        this.load.spritesheet('ghost', 'assets/ghost.png', {frameWidth: 92, frameHeight: 112});
         this.load.audio("jump", ["assets/jump.mp3"])
         this.load.audio("powerup", ["assets/Powerup.mp3"])
         this.load.audio("song", ["assets/mansion.mp3"])
         this.load.spritesheet('player1', 
             'assets/blueGuy.png',
-            { frameWidth: 64, frameHeight: 72 }
+            { frameWidth: 54, frameHeight: 60 }
         );
         this.load.spritesheet('player2', 
             'assets/redGuy.png',
-            { frameWidth: 64, frameHeight: 72 }
+            { frameWidth: 54, frameHeight: 60 }
         );
     }
 
@@ -339,6 +339,14 @@ class LevelThree extends Phaser.Scene {
             frameRate: 20 // fps
         });
 
+        this.anims.create({
+            key: 'fly',
+            frames: this.anims.generateFrameNumbers('ghost', {start: 0, end: 4}),
+            frameRate: 20,
+            repeat: -1
+
+        });
+
     }
     
     // Creates an item group
@@ -376,7 +384,7 @@ class LevelThree extends Phaser.Scene {
 
             if (random == 1){
                 const ghost = ghostsGroup.create(x, y - 50, 'ghost');
-                ghost.setScale(.05).refreshBody();
+                ghost.setScale(.5).refreshBody();
                 ghost.body.allowGravity = false;
                 ghost.body.immovable = true;
                 ghost.setVelocityX(speed - 70);
@@ -390,7 +398,7 @@ class LevelThree extends Phaser.Scene {
 
             if (random == 1){
                 const ghost = ghostsGroup.create(x, y - 50, 'ghost');
-                ghost.setScale(.05).refreshBody();
+                ghost.setScale(.5).refreshBody();
                 ghost.body.allowGravity = false;
                 ghost.body.immovable = true;
                 ghost.setVelocityX(speed + 70);

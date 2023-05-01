@@ -73,11 +73,11 @@ class LevelTwo extends Phaser.Scene {
         this.load.audio("song", ["assets/coolMountain.mp3"])
         this.load.spritesheet('player1', 
             'assets/blueGuy.png',
-            { frameWidth: 64, frameHeight: 72 }
+            { frameWidth: 54, frameHeight: 60 }
         );
         this.load.spritesheet('player2', 
             'assets/redGuy.png',
-            { frameWidth: 64, frameHeight: 72 }
+            { frameWidth: 54, frameHeight: 60 }
         );
     }
 
