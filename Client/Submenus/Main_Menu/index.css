@@ -65,3 +65,13 @@ button {
 button:hover {
   opacity: 1;
 }
+#logo {
+  display: block;
+  margin: auto;
+  position: absolute;
+  top: 21%; /* center the logo vertically */
+  left: 50%; /* center the logo horizontally */
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 45%; /* set the width of the logo */
+}
