@@ -1,30 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Main Menu</title>
 
-    <link rel="stylesheet" href="/Client/Submenus/Main_Menu/index.css">
-</head>
-<body>
-
+    <link rel="stylesheet" href="/Client/Submenus/Main_Menu/index.css" />
+  </head>
+  <body>
     <header>
-        <h1>Main Menu</h1>
+      <img src="/Client/Submenus/images/Logo.png" alt="Twoodle Jump logo" id="logo">
     </header>
-    
+
     <main>
-        <video id="background-video" autoplay loop muted>
-            <source src="/Client/Submenus/images/LevelOneGameplay.mp4" type = "video/mp4">
-        </video>
-        <button id="StartGameButton">Start Game</button>
-        <button id="LoadGameButton">LoadGame</button>
-        <button id="HowToPlayButton">How To Play</button>
-        <button id="CreditsButton">Credits</button>
+      <video id="background-video" autoplay loop muted>
+        <source
+          src="/Client/Submenus/images/LevelOneGameplay.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="/Client/Submenus/images/LevelTwoGameplay.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="/Client/Submenus/images/LevelThreeGameplay.mp4"
+          type="video/mp4"
+        />
+      </video>
+      <button id="StartGameButton">Start Game</button>
+      <button id="LoadGameButton">Load Game</button>
+      <button id="HowToPlayButton">How To Play</button>
+      <button id="CreditsButton">Credits</button>
     </main>
 
-    <script type = "text/javascript" src="/Client/Submenus/Main_Menu/index.js"></script>
-    <script type = "module" src="index.js"></script>
-</body>
+    <script
+      type="text/javascript"
+      src="/Client/Submenus/Main_Menu/index.js"
+    ></script>
+    <script type="module" src="index.js"></script>
+  </body>
 </html>
