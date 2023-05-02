@@ -1,25 +1,17 @@
 
-  
-.background-screen {
-    max-width: 1000px;
-    position: relative;
-    margin: auto;
-    background-position: center 20px;
-  }
-  .image {
-    position: relative;
-    opacity: 0.5;
-  }
-
   .credit-text {
     font-family: "Monaco", monospace;
-    position: absolute;
-    color: rgb(7, 7, 7);
-    top: 20px;
-    left: auto;
-    right: 23%;
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    width: 100vw;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 40px;
+    overflow: hidden;
     text-align: center;
   }
 
@@ -53,3 +45,79 @@
     opacity: 1;
   }
   
+  #logo {
+    display: block;
+    margin: auto;
+    position: absolute;
+    top: 21%; /* center the logo vertically */
+    left: 50%; /* center the logo horizontally */
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    width: 45%; /* set the width of the logo */
+  }
+
+  #background-video {
+    filter: blur(10px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+
+
+
+
+
+
+
+  @import url('https://fonts.googleapis.com/css?family=Montserrat:700');
+
+  body {
+
+    color: #fff;
+    text-align: center;
+    width: 100vw;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    overflow: hidden;
+  }
+  
+  #fly-in {
+    font-size: 4em;
+    margin: 40vh auto;
+    height: 20vh;
+    text-transform: uppercase;
+  }
+  
+  #fly-in span {
+    display: block;
+    font-size: .4em;
+    opacity: .8;
+  }
+  
+  #fly-in div {
+    position: fixed;
+    margin: 2vh 0;
+    left: 10vw;
+    width: 80vw;
+    animation: switch 32s linear infinite;
+    opacity: 0;
+  }
+  
+  @keyframes switch {
+    0% { opacity: 0; filter: blur(20px); transform: scale(12); }
+    3% { opacity: 1; filter: blur(0); transform: scale(1); }
+    10% { opacity: 1; filter: blur(0); }
+    13% { opacity: 0; filter: blur(10px); }
+    80% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  
+  #fly-in div:nth-child(2) { animation-delay: 4s; }
+  #fly-in div:nth-child(3) { animation-delay: 8s; }
+  #fly-in div:nth-child(4) { animation-delay: 12s; }
+  #fly-in div:nth-child(5) { animation-delay: 16s; }
+
