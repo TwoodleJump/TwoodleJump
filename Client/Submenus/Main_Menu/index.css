@@ -1,10 +1,67 @@
 #background-video {
-    filter: blur(10px);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
+  filter: blur(10px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+h1 {
+  text-align: center;
+  color: white;
+  margin: auto;
+  margin-bottom: 10%;
+  margin-top: 5%;
+  font-family: "Monaco", monospace;
+  font-size: 100px;
+}
+button {
+  font-family: "Monaco", monospace;
+  width: 35%;
+  margin: auto;
+  left: 0%;
+  right: 0%;
+  bottom: 20%;
+  height: 9%;
+  border-radius: 30px;
+  text-align: center;
+  background-color: #4caf50; /* Green */
+  border: 3px solid #4caf50;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 250%;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  opacity: 0.8;
+}
+#StartGameButton {
+  position: absolute;
+  margin: auto;
+  top: 0%;
+}
+
+#LoadGameButton {
+  position: absolute;
+  margin: auto;
+  top: 22%;
+}
+
+#HowToPlayButton {
+  position: absolute;
+  margin: auto;
+  top: 44%;
+}
+
+#CreditsButton {
+  position: absolute;
+  margin: auto;
+  top: 66%;
+}
+button:hover {
+  opacity: 1;
 }
