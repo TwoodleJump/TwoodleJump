@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700');
+
   .credit-text {
     font-family: "Monaco", monospace;
     position: fixed;
@@ -67,13 +69,6 @@
     z-index: -1;
   }
 
-
-
-
-
-
-
-  @import url('https://fonts.googleapis.com/css?family=Montserrat:700');
 
   body {
 
