@@ -6,8 +6,8 @@ const player2Wins = sessionStorage.getItem("player2Wins");
 
 const resultsDiv = document.getElementById("results");
 resultsDiv.innerHTML = `
-  <p>${player1Name}: ${player1Wins}</p>
-  <p>${player2Name}: ${player2Wins}</p>
+  <p><b>${player1Name}</b>: ${player1Wins}</p>
+  <p><b>${player2Name}</b>: ${player2Wins}</p>
 `;
 
 if (player1Wins > player2Wins) {
