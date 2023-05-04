@@ -17,26 +17,38 @@
     <main>
         <div class="create_game" id = "create_game_form">
             <form id="game_data">
-                <input 
-                    type="text"
-                    id="player_1_name"
-                    class = "input-bar"
-                    placeholder="Player 1 Name" />
-                <input 
-                    type="text"
-                    id="player_2_name"
-                    class = "input-bar"
-                    placeholder="Player 2 Name" />
-                <input 
-                    type="text"
-                    id="passcode"
-                    class = "input-bar"
-                    placeholder="Passcode" />
-                <input
-                    type="submit"
-                    id="add-user-submit"
-                    class="button"
-                    value="Start Game" />
+                <div class ="player_setup">
+                    <div class ="player">
+                        <h2>Player 1</h2>
+                        <img src ="\Client\Submenus\images\blue_player_icon.gif" id = "player_icon">
+                        <input 
+                            type="text"
+                            id="player_1_name"
+                            class = "input-bar"
+                            placeholder="Player 1 Name" />
+                    </div>
+                    <div class ="player">
+                        <h2>Player 2</h2>
+                        <img src ="\Client\Submenus\images\red_player_icon.gif" id = "player_icon">
+                        <input 
+                        type="text"
+                        id="player_2_name"
+                        class = "input-bar"
+                        placeholder="Player 2 Name" />
+                    </div>
+                </div>
+                <div class="enter_passcode">
+                    <input 
+                        type="text"
+                        id="passcode"
+                        class = "input-bar"
+                        placeholder="Passcode" />
+                    <input
+                        type="submit"
+                        id="add-user-submit"
+                        class="button"
+                        value="Start Game" />
+                </div>
             </form>
         </div>
         <button id="MainMenu">Main Menu</button>
