@@ -34,6 +34,10 @@ button {
     cursor: pointer;
     opacity: 0.8;
   }
+  
+button:hover {
+    opacity: 1;
+}
 .player_setup {
     justify-content: center;
     display: flex;
@@ -79,4 +83,9 @@ button {
     border-bottom-left-radius: 0;
     border-style: none;
     font-family: "Monaco", monospace;
+    cursor: pointer;
+}
+
+#add-user-submit:hover {
+    opacity: 1;
 }
