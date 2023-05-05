@@ -15,22 +15,37 @@
     </header>
     
     <main>
+        <div class ="player_setup">
+            <div class ="player">
+                <h2>Player 1</h2>
+                <img src ="\Client\Submenus\images\blue_player_icon.gif" id = "player_icon">
+
+            </div>
+            <div class ="player">
+                <h2>Player 2</h2>
+                <img src ="\Client\Submenus\images\red_player_icon.gif" id = "player_icon">
+
+            </div>
+        </div>
         <div class="load_game" id = "load_game_form">
             <form id="game_passcode_form">
-                <input 
-                    type="text"
-                    id="passcode"
-                    class = "input-bar"
-                    placeholder="passcode" />
-                <input
-                    type="submit"
-                    id="passcode-submit"
-                    class="button"
-                    value="Load Game" />
+                <div class="enter_passcode">
+                    <input 
+                        type="text"
+                        id="passcode"
+                        class = "input-bar"
+                        placeholder="passcode" />
+
+                    <input
+                        type="submit"
+                        id="passcode-submit"
+                        class="button"
+                        value="Load Game" />
+                </div>
             </form>
         </div>
 
-        <button id="MainMenu">Back to Main Menu</button>
+        <button id="MainMenu">Main Menu</button>
     </main>
 
     <script type = "module" src="/Client/Submenus/Load_Game/index.js"></script>
