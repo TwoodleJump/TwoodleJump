@@ -1,0 +1,14 @@
+# Additional Features
+## 1 - Local Co-op
+The first additional feature we implemented into the game was adding a second player. The reason for this addition is that when creating a single-player game, there is always a concern that if the game lacks complexity or isn't enjoyable enough, it may lack replayability. By introducing a second player, it forces each player to play the game differently based on who their opponent. This makes a game that repeats 3 levels have a fresh feel each time a new group of players play. This also eliminates the need to repetitively repeat the 3rd level once the game is finished as stated in the cmsc447-game-project Google doc. As a result, once the game is complete, the players can continue to compete in another round with each other or different people. 
+  
+The implementation of the two player system is done locally with each person using a different set of controls on a shared keyboard. Specifically, one player uses "WASD" to move their character while the other player uses the arrow keys. With this setup, both players can simultaneously compete in ToodleJump
+  
+This features also promotes the future of the game as it can be expanded beyond local play. In this scenario, both players would not have to share the keyboard, which would result in customizable controls, more opportunities to play an opponent, and a broader range of opponents, thus increasing the replayability previously mentioned.  
+
+## 2 - Player Based Levels
+In Twoodle Jump, levels can end in seconds or minutes depending on this skill of the player. In this sense, the levels are player driven as they conclude when someone falls off the screen. This is because levels extend incredibly high, making it virtually impossible for any player to make it to the top. With platforms that spawn in random locations, each time a user plays a level it will never look exactly the same as the last time they played it. This forces users into situations where their skills are put to the test as they overcome unique jumps never seen before.
+  
+Additionally, items also spawn randomly throughout the level. The longer players are able to survive, the more items that will spawn. With items, players are randomly able to gain an advantage over their opponent or cast a spell on their opponent to affect their gameplay. This randomness further ensures that each level differs based on how long a player can stay alive thus leading levels that are based around the player.
+
+In level 3, ghosts also have the chance to spawn within the level, creating additional obstacles as the player ascends the screen. This dynamic level design intensifies the pressure felt by each player, as any mistake could lead to losing the game.
