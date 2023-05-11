@@ -155,7 +155,11 @@ class LevelOne extends Phaser.Scene {
                 if (this.player1.body.touching.down) {
                     this.player1.anims.play('left1', true);
                 } else {
-                    this.player1.anims.play('jumpLeft1', true);
+                    if(this.player1.body.velocity.y <= 0){
+                        this.player1.anims.play('jumpLeftDown1');
+                    } else {
+                        this.player1.anims.play('jumpLeftUp1');
+                    }
                 }
             // Move right with no speed boost
             } else if (this.cursors.right.isDown  && !this.player1Speed) {
@@ -163,17 +167,39 @@ class LevelOne extends Phaser.Scene {
                 if (this.player1.body.touching.down) {
                     this.player1.anims.play('right1', true);
                 } else {
-                    this.player1.anims.play('jumpRight1', true);
+                    if(this.player1.body.velocity.y <= 0){
+                        this.player1.anims.play('jumpRightDown1');
+                    } else {
+                        this.player1.anims.play('jumpRightUp1');
+                    }
                 }
 
             // Move left with speed boost
             } else if (this.cursors.left.isDown && this.player1Speed) {
                 this.player1.setVelocityX(-450);
-                this.player1.anims.play('left1', true);
+                if (this.player1.body.touching.down) {
+                    this.player1.anims.play('left1', true);
+                } else {
+                    if(this.player1.body.velocity.y <= 0){
+                        this.player1.anims.play('jumpLeftDown1');
+                    } else {
+                        this.player1.anims.play('jumpLeftUp1');
+                    }
+                }
+
             // Move right with speed boost
             } else if (this.cursors.right.isDown  && this.player1Speed){
                 this.player1.setVelocityX(450);
-                this.player1.anims.play('right1', true);
+                if (this.player1.body.touching.down) {
+                    this.player1.anims.play('right1', true);
+                } else {
+                    if(this.player1.body.velocity.y <= 0){
+                        this.player1.anims.play('jumpRightDown1');
+                    } else {
+                        this.player1.anims.play('jumpRightUp1');
+                    }
+                }
+
             // No Move
             }  else {
                 this.player1.setVelocityX(0);
@@ -181,9 +207,9 @@ class LevelOne extends Phaser.Scene {
                     this.player1.anims.play('turn1');
                 } else {
                     if(this.player1.body.velocity.y <= 0){
-                        this.player1.anims.play('jumpRight1');
+                        this.player1.anims.play('jumpRightDown1');
                     } else {
-                        this.player1.anims.play('jumpRight2');
+                        this.player1.anims.play('jumpRightUp1');
                     }
 
                 }
@@ -214,23 +240,64 @@ class LevelOne extends Phaser.Scene {
             // Move left with no speed boost
             if (keys.A.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(-250);
-                this.player2.anims.play('left2', true);
+                if (this.player2.body.touching.down) {
+                    this.player2.anims.play('left2', true);
+                } else {
+                    if(this.player2.body.velocity.y <= 0){
+                        this.player2.anims.play('jumpLeftDown2');
+                    } else {
+                        this.player2.anims.play('jumpLeftUp2');
+                    }
+                }
             // Move right with no speed boost
             } else if (keys.D.isDown && !this.player2Speed) {
                 this.player2.setVelocityX(250);
-                this.player2.anims.play('right2', true);
+                if (this.player2.body.touching.down) {
+                    this.player2.anims.play('right2', true);
+                } else {
+                    if(this.player2.body.velocity.y <= 0){
+                        this.player2.anims.play('jumpRightDown2');
+                    } else {
+                        this.player2.anims.play('jumpRightUp2');
+                    }
+                }
             // Move left with speed boost
             } else if (keys.A.isDown && this.player2Speed){
                 this.player2.setVelocityX(-450);
-                this.player2.anims.play('left2', true);
+                if (this.player2.body.touching.down) {
+                    this.player2.anims.play('left2', true);
+                } else {
+                    if(this.player2.body.velocity.y <= 0){
+                        this.player2.anims.play('jumpLeftDown2');
+                    } else {
+                        this.player2.anims.play('jumpLeftUp2');
+                    }
+                }
             // Move right with speed boost
             } else if (keys.D.isDown && this.player2Speed){
                 this.player2.setVelocityX(450);
-                this.player2.anims.play('right2', true);
+                if (this.player2.body.touching.down) {
+                    this.player2.anims.play('right2', true);
+                } else {
+                    if(this.player2.body.velocity.y <= 0){
+                        this.player2.anims.play('jumpRightDown2');
+                    } else {
+                        this.player2.anims.play('jumpRightUp2');
+                    }
+                }
             // No move
             }  else {
                 this.player2.setVelocityX(0);
-                this.player2.anims.play('turn2');
+                if(this.player2.body.touching.down) {
+                    this.player2.anims.play('turn2');
+                } else {
+                    if(this.player2.body.velocity.y <= 0){
+                        this.player2.anims.play('jumpRightDown2');
+                    } else {
+                        this.player2.anims.play('jumpRightUp2');
+                    }
+
+                }
             }
 
             // Move down with no speed boost
@@ -497,29 +564,29 @@ class LevelOne extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'jumpRight1',
-            frames: this.anims.generateFrameNumbers('player1', { start: 1, end: 1 }),
-            frameRate: 8, // fps
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'jumpRight2',
+            key: 'jumpRightUp1',
             frames: this.anims.generateFrameNumbers('player1', { start: 3, end: 3 }),
             frameRate: 8, // fps
             repeat: -1
         });
 
         this.anims.create({
-            key: 'jumpLeft1',
-            frames: this.anims.generateFrameNumbers('player1', { start: 13, end: 13 }),
+            key: 'jumpRightDown1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 1, end: 1 }),
             frameRate: 8, // fps
             repeat: -1
         });
 
         this.anims.create({
-            key: 'jumpLeft2',
+            key: 'jumpLeftUp1',
             frames: this.anims.generateFrameNumbers('player1', { start: 15, end: 15 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jumpLeftDown1',
+            frames: this.anims.generateFrameNumbers('player1', { start: 13, end: 13 }),
             frameRate: 8, // fps
             repeat: -1
         });
@@ -546,6 +613,34 @@ class LevelOne extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('player2', { start: 4, end: 11 }),
             frameRate: 15, // fps
             repeat: -1 // Tells animation to loop
+        });
+
+        this.anims.create({
+            key: 'jumpRightUp2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 3, end: 3 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jumpRightDown2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 1, end: 1 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jumpLeftUp2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 15, end: 15 }),
+            frameRate: 8, // fps
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'jumpLeftDown2',
+            frames: this.anims.generateFrameNumbers('player2', { start: 13, end: 13 }),
+            frameRate: 8, // fps
+            repeat: -1
         });
 
 
